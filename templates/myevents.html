@@ -1,0 +1,58 @@
+[[extend 'layout.html']]
+
+<div class="section">
+
+  <a class="button is-primary" href="[[=URL('index')]]">
+    <span class="icon"><i class="fa fa-list"></i></span>
+    <span>Events</span>
+  </a>
+
+  <a class="button is-success" href="[[=URL('add')]]">
+    <span class="icon"><i class="fa fa-plus"></i></span>
+    <span>Add Event</span>
+  </a>
+
+  <a class="button is-warning" href="[[=URL('myevents')]]">
+    <span class="icon"><i class="fa fa-edit"></i></span>
+    <span>Edit My Events</span>
+  </a>
+
+  <div class="container">
+    <table class="table is-striped is-fullwidth">
+      <tr>
+        <th>Host</th>
+        <th>Event Name</th>
+        <th>Location</th>
+        <th>Description</th>
+        <th>Price</th>
+        <th>Created By</th>
+        <th>Creation Date</th>
+        <th></th>
+        <th></th>
+      </tr>
+      [[for row in rows:]]
+      <tr>
+        <td>[[=row.host]]</td>
+        <td>[[=row.event_name]]</td>
+        <td>[[=row.location]]</td>
+        <td>[[=row.description]]</td>
+        <td>[[=row.price]]</td>
+        <td>[[=row.created_by]]</td>
+        <td>[[=row.creation_date]]</td>
+        <td>
+          <a class="button" href="[[=URL('edit', row.id)]]">
+            <span class="icon"><i class="fa fa-fw fa-pencil"></i></span> <span>Edit</span>
+          </a>
+        </td>
+        <td>
+          <a class="button" href="[[=URL('delete', row.id, signer=url_signer)]]">
+            <span class="icon"><i class="fa fa-fw fa-trash"></i></span>
+          </a>
+        </td>
+      </tr>
+      [[pass]]
+    </table>
+  </div>
+
+
+</div>
