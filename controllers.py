@@ -65,12 +65,12 @@ def edit(event_id=None):
     assert event_id is not None
     # We read the product being edited from the db.
     # p = db(db.product.id == product_id).select().first()
-    p = db.event[event_id]
-    if p is None:
+    e = db.event[event_id]
+    if e is None:
         # Nothing found to be edited!
         redirect(URL('index'))
     # Edit form: it has record=
-    form = Form(db.event, record=p, deletable=False, csrf_session=session, formstyle=FormStyleBulma)
+    form = Form(db.event, record=e, deletable=False, csrf_session=session, formstyle=FormStyleBulma)
     if form.accepted:
         # The update already happened!
         redirect(URL('index'))
@@ -82,3 +82,22 @@ def delete(event_id=None):
     assert event_id is not None
     db(db.event.id == event_id).delete()
     redirect(URL('myevents'))
+
+@action('attend/<event_id:int>')
+@action.uses(db, session, auth.user, url_signer.verify())
+def attend(event_id=None):
+    assert event_id is not None
+    e = db.event[event_id]
+    if e is None:
+        redirect(URL('index'))
+    a = db(
+        (db.attendees.event_id == event_id) &
+        (db.attendees.user_id == auth.user_id)
+    )
+    if a.select().first() is None:
+        print('attending row created')
+        db.attendees.insert(event_id=event_id, user_id=auth.user_id)
+    else:
+        print('attending row deleted')
+        a.delete()
+    redirect(URL('index'))

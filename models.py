@@ -13,6 +13,10 @@ def get_user_email():
 def get_time():
     return datetime.datetime.utcnow()
 
+def get_user_id():
+    return auth.current_user.get('id') if auth.current_user else 0
+
+
 db.define_table(
     'event',
     Field('host', requires=IS_NOT_EMPTY()),
@@ -22,6 +26,12 @@ db.define_table(
     Field('price', 'float', default=0),
     Field('created_by', default=get_user_email),
     Field('creation_date', 'datetime', default=get_time),
+)
+
+db.define_table(
+    'attendees',
+    Field('event_id', 'references event', requires=IS_NOT_EMPTY(), ondelete='CASCADE'),
+    Field('user_id', 'references auth_user', requires=IS_NOT_EMPTY(), ondelete='CASCADE'),
 )
 
 db.event.id.readable = db.event.id.writable = False
