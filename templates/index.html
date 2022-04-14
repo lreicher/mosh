@@ -26,6 +26,7 @@
         <th>Price</th>
         <th>Created By</th>
         <th>Creation Date</th>
+        <th>Attend</th>
         <th></th>
         <th></th>
       </tr>
@@ -38,6 +39,11 @@
         <td>[[=row.price]]</td>
         <td>[[=row.created_by]]</td>
         <td>[[=row.creation_date]]</td>
+        <td>
+          <a class="button" href="[[=URL('attend', row.id, signer=url_signer)]]">
+            <span class="icon"><i class="fa fa-fw fa-check"></i></span>
+          </a>
+        </td>
       </tr>
       [[pass]]
     </table>
