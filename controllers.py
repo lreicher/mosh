@@ -42,7 +42,7 @@ def index():
 
 @action('myevents')
 @action.uses('myevents.html', db, auth.user)
-def feed():
+def myevents():
     rows = db(db.event.created_by == get_user_email()).select()
     #rows = db(db.event).select()
     return dict(rows=rows, url_signer=url_signer)
@@ -58,7 +58,7 @@ def add():
     # Either this is a GET request, or this is a POST but not accepted = with errors.
     return dict(form=form)
 
-# This endpoint will be used for URLs of the form /edit/k where k is the product id.
+# This endpoint will be used for URLs of the form /edit/k where k is the event id.
 @action('edit/<event_id:int>', method=["GET", "POST"])
 @action.uses('edit.html', db, session, auth.user)
 def edit(event_id=None):
@@ -83,8 +83,21 @@ def delete(event_id=None):
     db(db.event.id == event_id).delete()
     redirect(URL('myevents'))
 
+@action('attendees/<event_id:int>')
+@action.uses('attendees.html', db, session, auth.user)
+def attendees(event_id=None):
+    assert event_id is not None
+    event = db.event[event_id]
+    if event is None or not (event.created_by == get_user_email()):
+        redirect(URL('index'))
+    rows = db(
+        (db.attendees.event_id == event_id) &
+        (db.auth_user.id == db.attendees.user_id)
+    ).select(db.auth_user.first_name, db.auth_user.last_name)
+    return dict(rows=rows, event=event)
+
 @action('attend/<event_id:int>')
-@action.uses(db, session, auth.user, url_signer.verify())
+@action.uses(db, session, auth.user)
 def attend(event_id=None):
     assert event_id is not None
     e = db.event[event_id]
@@ -95,9 +108,7 @@ def attend(event_id=None):
         (db.attendees.user_id == auth.user_id)
     )
     if a.select().first() is None:
-        print('attending row created')
         db.attendees.insert(event_id=event_id, user_id=auth.user_id)
     else:
-        print('attending row deleted')
         a.delete()
     redirect(URL('index'))

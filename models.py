@@ -13,9 +13,6 @@ def get_user_email():
 def get_time():
     return datetime.datetime.utcnow()
 
-def get_user_id():
-    return auth.current_user.get('id') if auth.current_user else 0
-
 
 db.define_table(
     'event',

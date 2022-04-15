@@ -16,7 +16,8 @@
     <span>Edit My Events</span>
   </a>
 
-  <div class="container">
+    <div class="container my-4">
+        <h1 class="title">Your Event</h1>
     <table class="table is-striped is-fullwidth">
       <tr>
         <th>Host</th>
@@ -26,28 +27,32 @@
         <th>Price</th>
         <th>Created By</th>
         <th>Creation Date</th>
-        <th>Attend</th>
-        <th></th>
-        <th></th>
+      </tr>
+      <tr>
+        <td>[[=event.host]]</td>
+        <td>[[=event.event_name]]</td>
+        <td>[[=event.location]]</td>
+        <td>[[=event.description]]</td>
+        <td>[[=event.price]]</td>
+        <td>[[=event.created_by]]</td>
+        <td>[[=event.creation_date]]</td>
+      </tr>
+    </table>
+        </div>
+
+  <div class="container">
+      <h1 class="title">Attendees</h1>
+    <table class="table is-striped is-fullwidth">
+      <tr>
+        <th>First Name</th>
+        <th>Last Name</th>
       </tr>
       [[for row in rows:]]
       <tr>
-        <td>[[=row.host]]</td>
-        <td>[[=row.event_name]]</td>
-        <td>[[=row.location]]</td>
-        <td>[[=row.description]]</td>
-        <td>[[=row.price]]</td>
-        <td>[[=row.created_by]]</td>
-        <td>[[=row.creation_date]]</td>
-        <td>
-          <a class="button" href="[[=URL('attend', row.id)]]">
-            <span class="icon"><i class="fa fa-fw fa-check"></i></span>
-          </a>
-        </td>
+        <td>[[=row.first_name]]</td>
+        <td>[[=row.last_name]]</td>
       </tr>
       [[pass]]
     </table>
   </div>
-
-
 </div>
