@@ -35,13 +35,13 @@ from py4web.utils.form import Form, FormStyleBulma
 url_signer = URLSigner(session)
 
 @action('index') # /fixtures_example/index
-@action.uses('index.html', db, auth.user)
+@action.uses('index.html', url_signer, db, auth.user)
 def index():
     rows = db(db.event).select()
     return dict(rows=rows, url_signer=url_signer)
 
 @action('myevents')
-@action.uses('myevents.html', db, auth.user)
+@action.uses('myevents.html', url_signer, db, auth.user)
 def myevents():
     rows = db(db.event.created_by == get_user_email()).select()
     #rows = db(db.event).select()
