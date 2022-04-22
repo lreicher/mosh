@@ -14,6 +14,7 @@ from pydal.tools.tags import Tags
 from py4web.utils.factories import ActionFactory
 from py4web.utils.form import FormStyleBulma
 from . import settings
+from pydal.validators import IS_EMAIL, IS_NOT_IN_DB, IS_MATCH
 
 # #######################################################
 # implement custom loggers form settings.LOGGERS
@@ -81,7 +82,7 @@ elif settings.SESSION_TYPE == "database":
 # Instantiate the object and actions that handle auth
 # #######################################################
 
-auth = Auth(session, db, define_tables=False, extra_fields=[Field('birthday', 'date')])
+auth = Auth(session, db, define_tables=False, extra_fields=[Field('birthday', 'date')], use_phone_number=True)
 
 # Fixes the messages.
 auth_messages = copy.deepcopy(auth.MESSAGES)
@@ -110,6 +111,14 @@ auth.param.password_complexity = {"entropy": 2}
 auth.param.block_previous_password_num = 3
 auth.param.formstyle = FormStyleBulma
 auth.define_tables()
+
+# Require emails to be @ucsc.edu or @cabrillo.edu
+db.auth_user.email.requires = (
+    IS_EMAIL(),
+    IS_MATCH('^[A-Za-z0-9._%+-]+(@ucsc\.edu|@cabrillo\.edu)$',
+             error_message="Sorry, only ucsc.edu and cabrillo.edu domains allowed"),
+    IS_NOT_IN_DB(db, "auth_user.email")
+)
 
 # #######################################################
 # Configure email sender for auth

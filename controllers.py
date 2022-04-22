@@ -65,12 +65,12 @@ def edit(event_id=None):
     assert event_id is not None
     # We read the product being edited from the db.
     # p = db(db.product.id == product_id).select().first()
-    e = db.event[event_id]
-    if e is None:
+    event = db.event[event_id]
+    if event is None or not (event.created_by == get_user_email()):
         # Nothing found to be edited!
         redirect(URL('index'))
     # Edit form: it has record=
-    form = Form(db.event, record=e, deletable=False, csrf_session=session, formstyle=FormStyleBulma)
+    form = Form(db.event, record=event, deletable=False, csrf_session=session, formstyle=FormStyleBulma)
     if form.accepted:
         # The update already happened!
         redirect(URL('index'))
