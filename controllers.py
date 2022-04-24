@@ -40,6 +40,7 @@ def index():
     rows = db(db.event).select()
     return dict(rows=rows, url_signer=url_signer)
 
+
 @action('myevents')
 @action.uses('myevents.html', url_signer, db, auth.user)
 def myevents():

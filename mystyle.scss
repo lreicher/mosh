@@ -1,0 +1,31 @@
+html,
+body {
+  height: 100%;
+}
+
+article {
+  height: 100%;
+  
+  section {
+    background: yellow;
+    height: 100%;
+    display: flex;
+    overflow-y: auto;
+    flex-direction: column;
+    float:left;
+    
+    &.is-narrow {
+      width: 220px;
+    }
+    
+    // right panel
+    // this panel will be twice as wide
+    // as the left-hand panel
+    // remove flex definition below for a 50/50 split
+    &:last-of-type {
+      background: #f6c8f6;
+      flex: 2 1 auto;
+      float:middle;
+    }
+  }
+}
