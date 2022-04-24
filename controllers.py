@@ -38,7 +38,12 @@ url_signer = URLSigner(session)
 @action.uses('index.html', url_signer, db, auth.user)
 def index():
     rows = db(db.event).select()
-    return dict(rows=rows, url_signer=url_signer)
+    attending = db(
+        (db.attendees.user_id == auth.user_id) &
+        (db.event.id == db.attendees.event_id)
+    ).select(db.event.id, db.event.host, db.event.event_name, db.event.location, db.event.price)
+    print(attending)
+    return dict(rows=rows, attending=attending, url_signer=url_signer)
 
 
 @action('myevents')
