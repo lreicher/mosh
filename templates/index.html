@@ -80,6 +80,32 @@
             </h2>
             <div class="columns block is-mobile">
               <div class="column">
+                <div class="container">
+                 <table class="table is-striped is-mobile">
+                  <tr>
+                   <th>Host</th>
+                   <th>Event Name</th>
+                   <th>Location</th>
+                   <th>Price</th>
+                   <th>Attend</th>
+                   <th></th>
+                   <th></th>
+                  </tr>
+                  [[for a in attending:]]
+                  <tr>
+                   <td>[[=a.host]]</td>
+                   <td>[[=a.event_name]]</td>
+                   <td>[[=a.location]]</td>
+                   <td>[[=a.price]]</td>
+                   <td>
+                     <a class="button" href="[[=URL('attend', a.id)]]">
+                       <span class="icon"><i class="fa fa-fw fa-check"></i></span>
+                     </a>
+                   </td>
+                  </tr>
+                 [[pass]]
+                 </table>
+               </div>
                 <p>
                   This is where saved parties will be
                 </p>

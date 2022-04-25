@@ -50,8 +50,11 @@ def index():
 @action.uses('myevents.html', url_signer, db, auth.user)
 def myevents():
     rows = db(db.event.created_by == get_user_email()).select()
-    #rows = db(db.event).select()
-    return dict(rows=rows, url_signer=url_signer)
+    attending = db(
+         (db.attendees.user_id == auth.user_id) &
+         (db.event.id == db.attendees.event_id)
+     ).select(db.event.id, db.event.host, db.event.event_name, db.event.location, db.event.price)
+    return dict(rows=rows, attending=attending, url_signer=url_signer)
 
 @action('add', method=["GET", "POST"])
 @action.uses('add.html', db, session, auth.user)
