@@ -10,6 +10,16 @@ from pydal.validators import *
 def get_user_email():
     return auth.current_user.get('email') if auth.current_user else None
 
+
+def get_user_age():
+    if not auth.current_user:
+        return None
+    birth = auth.current_user.get('birthday')
+    now = datetime.date.today()
+    age = (now - birth).days / 365
+    return age
+
+
 def get_time():
     return datetime.datetime.utcnow()
 
