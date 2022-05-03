@@ -31,6 +31,9 @@ db.define_table(
     Field('location', requires=IS_NOT_EMPTY()),
     Field('description', 'text', requires=IS_NOT_EMPTY()),
     Field('price', 'float', default=0),
+    Field('date', 'date', requires=IS_NOT_EMPTY()),
+    Field('time', 'time', requires=IS_NOT_EMPTY()),
+    Field('image', 'upload'),
     Field('created_by', default=get_user_email),
     Field('creation_date', 'datetime', default=get_time),
 )

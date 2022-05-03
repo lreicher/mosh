@@ -34,8 +34,15 @@ from py4web.utils.form import Form, FormStyleBulma
 
 url_signer = URLSigner(session)
 
-@action('index') # /fixtures_example/index
-@action.uses('index.html', url_signer, db, auth.user)
+@action("index")
+@action.uses("index.html", auth)
+def index():
+    if auth.user_id:
+        redirect(URL("feed"))
+    return {}
+
+@action('feed') # /fixtures_example/index
+@action.uses('feed.html', url_signer, db, auth.user)
 def index():
     rows = db(db.event).select()
     attending = db(
