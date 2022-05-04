@@ -48,7 +48,9 @@ def index():
     attending = db(
         (db.attendees.user_id == auth.user_id) &
         (db.event.id == db.attendees.event_id)
-    ).select(db.event.id, db.event.host, db.event.event_name, db.event.location, db.event.price)
+    ).select(db.event.id, db.event.host, db.event.event_name,
+             db.event.location, db.event.price, db.event.date,
+             db.event.time)
     print(attending)
     return dict(rows=rows, attending=attending, url_signer=url_signer)
 

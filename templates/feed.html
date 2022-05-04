@@ -72,15 +72,55 @@
   <!--  body START -->
   <body>
     <section class="section">
-      <div class="columns block is-mobile">
+        <a class="button is-primary" href="[[=URL('index')]]">
+            <span class="icon"><i class="fa fa-list"></i></span>
+            <span>Events</span>
+        </a>
+        <a class="button is-success" href="[[=URL('add')]]">
+            <span class="icon"><i class="fa fa-plus"></i></span>
+            <span>Add Event</span>
+        </a>
+        <a class="button is-warning" href="[[=URL('myevents')]]">
+            <span class="icon"><i class="fa fa-edit"></i></span>
+            <span>Edit My Events</span>
+        </a>
+      <div class="columns block is-mobile mt-3">
         <div class="column is-3">
           <div class="box">
             <h2 class="subtitle">
               Saved Parties
             </h2>
+              [[for a in attending:]]
+                  <div class="card mb-3">
+                      <div class="card-header">
+                          <div class="card-header-title">
+                              [[=a.event_name]]
+                          </div>
+                      </div>
+                      <div class="card-image">
+                        <figure class="image">
+                          <img src="mosh_logo.png" alt="Placeholder image">
+                        </figure>
+                      </div>
+                      <div class="card-content">
+                        <div class="content">
+                          <div class="columns">
+                              <div class="column">
+                                  [[=a.location]]
+                              </div>
+                              <div class="column">
+                                  [[=a.date]]
+                                  [[=a.time]]
+                              </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+              [[pass]]
             <div class="columns block is-mobile">
               <div class="column">
                 <div class="container">
+                    <h1>Just here for testing</h1>
                  <table class="table is-striped is-mobile">
                   <tr>
                    <th>Host</th>
@@ -106,9 +146,6 @@
                  [[pass]]
                  </table>
                </div>
-                <p>
-                  This is where saved parties will be
-                </p>
               </div>
             </div>
           </div>
@@ -120,24 +157,60 @@
               New Parties
             </h2>
             <!-- MAIN FEED -->
-
-            <div class="section">
-              <a class="button is-primary" href="[[=URL('index')]]">
-                <span class="icon"><i class="fa fa-list"></i></span>
-                <span>Events</span>
-              </a>
-
-              <a class="button is-success" href="[[=URL('add')]]">
-                <span class="icon"><i class="fa fa-plus"></i></span>
-                <span>Add Event</span>
-              </a>
-
-              <a class="button is-warning" href="[[=URL('myevents')]]">
-                <span class="icon"><i class="fa fa-edit"></i></span>
-                <span>Edit My Events</span>
-              </a>
-
+            <div class="section pt-0">
               <div class="container">
+                  [[for row in rows:]]
+                  <div class="card mb-3">
+                      <div class="card-header">
+                          <div class="card-header-title">
+                              [[=row.event_name]]
+                          </div>
+                      </div>
+                      <div class="card-image">
+                        <figure class="image">
+                          <img src="mosh_logo.png" alt="Placeholder image">
+                        </figure>
+                      </div>
+                      <div class="card-content">
+                        <div class="content">
+                          <div class="columns">
+                              <div class="column">
+                                  <span class="icon">
+                                    <i class="fa fa-map-marker" aria-hidden="true"></i>
+                                  </span>
+                                  [[=row.location]]
+                              </div>
+                              <div class="column">
+                                  [[=row.date]]
+                                  [[=row.time]]
+                              </div>
+                              <div class="column">
+                                  <span class="icon">
+                                    <i class="fa fa-glass" aria-hidden="true"></i>
+                                  </span>
+                                  Substances
+                              </div>
+                              <div class="column">
+                                  [[if row.price == 0:]]
+                                    Free
+                                  [[else:]]
+                                    $[[=row.price]]
+                                  [[pass]]
+                                  <span class="icon">
+                                    <i class="fa fa-ticket" aria-hidden="true"></i>
+                                  </span>
+                              </div>
+                          </div>
+                            <p class="mt-1">[[=row.description]]</p>
+                            <a class="button is-primary is-fullwidth" href="[[=URL('attend', row.id)]]">
+                                Attend
+                            </a>
+                        </div>
+                      </div>
+                    </div>
+                  [[pass]]
+
+                <h1 class="mt-5">Just here for testing</h1>
                 <table class="table is-striped is-fullwidth">
                   <tr>
                     <th>Host</th>
