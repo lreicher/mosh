@@ -25,7 +25,7 @@ session, db, T, auth, and tempates are examples of Fixtures.
 Warning: Fixtures MUST be declared with @action.uses({fixtures}) else your app will result in undefined behavior
 """
 
-from py4web import action, request, abort, redirect, URL
+from py4web import action, request, abort, redirect, URL, response
 from yatl.helpers import A
 from .common import db, session, T, cache, auth, logger, authenticated, unauthenticated, flash
 from py4web.utils.url_signer import URLSigner
@@ -130,3 +130,23 @@ def attend(event_id=None):
     else:
         a.delete()
     redirect(URL('index'))
+
+def download1():
+    return response.download(request, db)
+
+def download2():
+    pic = db(db.images).select().first().picture   #select first picture
+    return dict(pic=pic)
+
+# def display_form():
+#     record = db.event(request.args(0))
+#     form = SQLFORM(db.event, record, deletable=True,
+#                     upload=URL('download'))
+#     if form.process().accepted:
+#         response.flash = 'form accepted'
+#     elif form.errors:
+#         response.flash = 'form has errors'
+#     return dict(form=form)
+
+# def download():
+#     reponse.download(request, db)

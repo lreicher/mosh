@@ -168,7 +168,29 @@
                       </div>
                       <div class="card-image">
                         <figure class="image">
-                          <img src="mosh_logo.png" alt="Placeholder image">
+                          <!-- <img src="mosh_logo.png" alt="Placeholder image"> -->
+                          <!-- [[=row.image]] -->
+
+                          <img src="{{=URL('default', 'download1', args=picture_name)}}" />
+
+                          <img  src="{{=URL('download2', args=pic)}}" />
+
+
+
+                          <!-- <p><input type="file"  accept="image/*" name="image" id="file"  onchange="loadFile(event)" style="display: none;"></p>
+                          <p><label for="file" style="cursor: pointer;">Upload Image</label></p>
+                          <p><img id="output" width="200" /></p>
+
+                          <script>
+                          var loadFile = function(event) {
+                            var image = document.getElementById('output');
+                            image.src = URL.createObjectURL(event.target.files[0]);
+                          };
+                          </script> -->
+
+
+
+
                         </figure>
                       </div>
                       <div class="card-content">
@@ -210,7 +232,7 @@
                     </div>
                   [[pass]]
 
-                <h1 class="mt-5">Just here for testing</h1>
+                <!-- <h1 class="mt-5">Just here for testing</h1>
                 <table class="table is-striped is-fullwidth">
                   <tr>
                     <th>Host</th>
@@ -218,8 +240,8 @@
                     <th>Location</th>
                     <th>Description</th>
                     <th>Price</th>
-                    <!-- <th>Created By</th> -->
-                    <!-- <th>Creation Date</th> -->
+                    <th>Created By</th>
+                    <th>Creation Date</th>
                     <th>Attend</th>
                     <th></th>
                     <th></th>
@@ -231,8 +253,8 @@
                     <td>[[=row.location]]</td>
                     <td>[[=row.description]]</td>
                     <td>[[=row.price]]</td>
-                    <!-- <td>[[=row.created_by]]</td> -->
-                    <!-- <td>[[=row.creation_date]]</td> -->
+                    <td>[[=row.created_by]]</td>
+                    <td>[[=row.creation_date]]</td>
                     <td>
                       <a class="button" href="[[=URL('attend', row.id)]]">
                         <span class="icon"><i class="fa fa-fw fa-check"></i></span>
@@ -240,7 +262,7 @@
                     </td>
                   </tr>
                   [[pass]]
-                </table>
+                </table> -->
               </div>
             </div>
           </div>
