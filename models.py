@@ -39,6 +39,8 @@ db.define_table(
     Field('creation_date', 'datetime', default=get_time),
 )
 
+db.event.when = Field.Virtual(lambda row: row.event.date.strftime('%A %m/%d/%Y ') + row.event.time.strftime('@ %I:%M %p'))
+
 db.define_table(
     'attendees',
     Field('event_id', 'references event', requires=IS_NOT_EMPTY(), ondelete='CASCADE'),
