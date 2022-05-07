@@ -130,3 +130,11 @@ def attend(event_id=None):
     else:
         a.delete()
     redirect(URL('index'))
+
+@action('upload/<event_id:int>')
+@action.uses(db, session, auth.user)
+def upload():
+    pic = db(db.images).select().first().picture   #select first picture
+    return dict(pic=pic)
+
+    

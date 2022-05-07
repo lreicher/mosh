@@ -33,7 +33,8 @@ db.define_table(
     Field('price', 'float', default=0),
     Field('date', 'date', requires=IS_NOT_EMPTY()),
     Field('time', 'time', requires=IS_NOT_EMPTY()),
-    Field('image', 'upload'),
+    Field('image_filename'),
+    Field('picture', 'upload'),
     Field('created_by', default=get_user_email),
     Field('creation_date', 'datetime', default=get_time),
 )
