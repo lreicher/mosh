@@ -44,7 +44,7 @@ def index():
 @action('feed') # /fixtures_example/index
 @action.uses('feed.html', url_signer, db, auth.user)
 def index():
-    rows = db(db.event).select()
+    rows = db(db.event).select(orderby=db.event.date|db.event.time)
     attending = db(
         (db.attendees.user_id == auth.user_id) &
         (db.event.id == db.attendees.event_id)
