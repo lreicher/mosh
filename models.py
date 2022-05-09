@@ -40,15 +40,15 @@ db.define_table(
 )
 
 db.event.when = Field.Virtual(lambda row: row.event.date.strftime('%A %m/%d/%Y ') + row.event.time.strftime('@ %I:%M %p'))
+db.event.when.readable = db.event.when.writable = False
+db.event.id.readable = db.event.id.writable = False
+db.event.created_by.readable = db.event.created_by.writable = False
+db.event.creation_date.readable = db.event.creation_date.writable = False
 
 db.define_table(
     'attendees',
     Field('event_id', 'references event', requires=IS_NOT_EMPTY(), ondelete='CASCADE'),
     Field('user_id', 'references auth_user', requires=IS_NOT_EMPTY(), ondelete='CASCADE'),
 )
-
-db.event.id.readable = db.event.id.writable = False
-db.event.created_by.readable = db.event.created_by.writable = False
-db.event.creation_date.readable = db.event.creation_date.writable = False
 
 db.commit()
