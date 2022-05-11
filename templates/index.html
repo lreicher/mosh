@@ -1,6 +1,25 @@
-[[extend "layout.html"]]
+[[extend 'layout.html']]
 
-<center>
-  <h1 class="title has-test-weight-bold is-1">Welcome to Mosh</h1>
-  <a class="button is-info" href="[[=URL('auth/login')]]">Click to Login</a>
-</center>
+<style>
+  [v-cloak] {
+       display: none;
+  }
+</style>
+
+<div class="section" id="vue-target" v-cloak>
+  <section class="section">
+    <center>
+      <h1 class="title has-test-weight-bold is-1">Welcome to Mosh</h1>
+      <a class="button is-info" href="[[=URL('auth/login')]]">Click to Login</a>
+    </center>
+  </section>
+</div>
+
+
+[[block page_scripts]]
+<!-- Loads the index-specific js for Vue -->
+<script>
+  let my_callback_url = "[[=XML(my_callback_url)]]";
+</script>
+<script src="js/index.js"></script>
+[[end]]

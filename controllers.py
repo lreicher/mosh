@@ -34,12 +34,15 @@ from py4web.utils.form import Form, FormStyleBulma
 
 url_signer = URLSigner(session)
 
-@action("index")
-@action.uses("index.html", auth)
+@action('index')
+@action.uses('index.html', db, auth, url_signer)
 def index():
     if auth.user_id:
         redirect(URL("feed"))
-    return {}
+    return dict(
+        # COMPLETE: return here any signed URLs you need.
+        my_callback_url = URL('my_callback', signer=url_signer),
+    )
 
 @action('feed') # /fixtures_example/index
 @action.uses('feed.html', url_signer, db, auth.user)
