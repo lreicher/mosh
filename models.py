@@ -39,6 +39,16 @@ db.define_table(
     Field('creation_date', 'datetime', default=get_time),
 )
 
+db.define_table(
+    'messages',
+    Field('user_to', requires=IS_NOT_EMPTY()),
+    Field('user_from', requires=IS_NOT_EMPTY()),
+    Field('message', requires=IS_NOT_EMPTY()),
+    Field('event_id', requires=IS_NOT_EMPTY()),
+    Field('date', 'datetime', default=get_time),
+    #Field('time', 'time', requires=IS_NOT_EMPTY()),
+)
+
 db.event.when = Field.Virtual(lambda row: row.event.date.strftime('%A %m/%d/%Y ') + row.event.time.strftime('@ %I:%M %p'))
 db.event.when.readable = db.event.when.writable = False
 db.event.id.readable = db.event.id.writable = False
