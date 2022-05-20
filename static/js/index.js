@@ -60,6 +60,7 @@ let init = (app) => {
                     date: response.data.event.date,
                     time: response.data.event.time,
                     when: response.data.event.when,
+                    created_by: response.data.event.created_by,
                     attending: false,
                 });
                 app.enumerate(app.vue.events);
@@ -127,7 +128,7 @@ let init = (app) => {
     // And this initializes it.
     app.init = () => {
         axios.get(load_feed_url).then(function (response) {
-            let events = response.data.events
+            let events = response.data.events;
             app.enumerate(events);
             app.complete(events);
             app.vue.events = events;
