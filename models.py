@@ -19,6 +19,9 @@ def get_user_age():
     age = (now - birth).days / 365
     return age
 
+def get_user():
+    return auth.current_user.get('id') if auth.current_user else None
+
 
 def get_time():
     return datetime.datetime.utcnow()
@@ -39,16 +42,6 @@ db.define_table(
     Field('creation_date', 'datetime', default=get_time),
 )
 
-db.define_table(
-    'messages',
-    Field('user_to', requires=IS_NOT_EMPTY()),
-    Field('user_from', requires=IS_NOT_EMPTY()),
-    Field('message', requires=IS_NOT_EMPTY()),
-    Field('event_id', requires=IS_NOT_EMPTY()),
-    Field('date', 'datetime', default=get_time),
-    #Field('time', 'time', requires=IS_NOT_EMPTY()),
-)
-
 db.event.when = Field.Virtual(lambda row: row.event.date.strftime('%A %m/%d/%Y ') + row.event.time.strftime('@ %I:%M %p'))
 db.event.when.readable = db.event.when.writable = False
 db.event.id.readable = db.event.id.writable = False
@@ -56,9 +49,20 @@ db.event.created_by.readable = db.event.created_by.writable = False
 db.event.creation_date.readable = db.event.creation_date.writable = False
 
 db.define_table(
+    'messages',
+    Field('host_id', 'references auth_user', requires=IS_NOT_EMPTY()),
+    Field('sender', 'references auth_user', requires=IS_NOT_EMPTY()),
+    Field('receiver', 'references auth_user', requires=IS_NOT_EMPTY()),
+    Field('event_id', 'references event', requires=IS_NOT_EMPTY()),
+    Field('message', requires=IS_NOT_EMPTY()),
+    Field('date', 'datetime', default=get_time),
+)
+
+db.define_table(
     'attendees',
     Field('event_id', 'references event', requires=IS_NOT_EMPTY(), ondelete='CASCADE'),
     Field('user_id', 'references auth_user', requires=IS_NOT_EMPTY(), ondelete='CASCADE'),
+    Field('attending', 'boolean', requires=IS_NOT_EMPTY(), default=False),
 )
 
 db.commit()

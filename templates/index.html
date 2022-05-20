@@ -7,19 +7,191 @@
 </style>
 
 <div class="section" id="vue-target" v-cloak>
-  <section class="section">
-    <center>
-      <h1 class="title has-test-weight-bold is-1">Welcome to Mosh</h1>
-      <a class="button is-info" href="[[=URL('auth/login')]]">Click to Login</a>
-    </center>
-  </section>
+    <div class="buttons">
+        <button @click="set_add_status(true)" class="button is-primary">
+            <i class="fa fa-plus fa-fw"></i>Add Event
+        </button>
+        <button v-if="!view_myevents" @click="set_view_myevents_status(true)" class="button is-info">
+            <i class="fa fa-book fa-fw"></i>View My Events
+        </button>
+        <button v-else @click="set_view_myevents_status(false)" class="button is-info">
+            <i class="fa fa-globe fa-fw"></i>View All Events
+        </button>
+    </div>
+
+    <!-- MyEvents Page -->
+    <div v-if="view_myevents" class="container">
+        <table class="table is-striped is-fullwidth">
+            <tr>
+                <th>Host</th>
+                <th>Event Name</th>
+                <th>Location</th>
+                <th>Description</th>
+                <th>Price</th>
+                <th>Created By</th>
+                <th>Creation Date</th>
+                <th></th>
+                <th></th>
+                <th></th>
+            </tr>
+            <template v-for="e in events">
+                <div v-if="e.created_by === user_email">
+                    <tr>
+                        <td>{{e.host}}</td>
+                        <td>{{e.event_name}}</td>
+                        <td>{{e.location}}</td>
+                        <td>{{e.description}}</td>
+                        <td>{{e.price}}</td>
+                        <td>{{e.when}}</td>
+                        <td>{{e.creation_date}}</td>
+                        <td>
+                            <button class="button is-primary">
+                                <i class="fa fa-pencil fa-fw"></i>Edit Event
+                            </button>
+                            <button @click="delete_event(e._idx)" class="button is-danger">
+                                <i class="fa fa-pencil fa-fw"></i>Delete Event
+                            </button>
+                            <button class="button is-primary">
+                                <i class="fa fa-users fa-fw"></i>View Attendees
+                            </button>
+                        </td>
+                    </tr>
+                </div>
+            </template>
+
+        </table>
+    </div>
+
+    <!-- Main Feed -->
+    <div v-else class="columns block is-mobile mt-3">
+        <div class="column is-3">
+            <div class="box">
+                <h2 class="subtitle">Saved Parties</h2>
+                <div v-for="e in events">
+                    <div v-if="e.attending === true" class="card mb-3">
+                        <div class="card-header">
+                            <div class="card-header-title">{{e.event_name}}</div>
+                        </div>
+                        <div class="card-image">
+                            <figure class="image">
+                                <img src="mosh_logo.png" alt="Placeholder image">
+                            </figure>
+                        </div>
+                        <div class="card-content">
+                            <div class="content">
+                                <div class="columns">
+                                    <div class="column">{{e.location}}</div>
+                                    <div class="column">{{e.when}}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+          </div>
+        </div>
+        <div class="column is-6 box">
+            <div v-if="add_status">
+                <div class="form">
+                    <p>Let's get some details about your event.</p>
+                    <div class="field">
+                        <div class="control">
+                            <input v-model="new_event_host" placeholder="Who's Hosting?"/>
+                            <input v-model="new_event_name" placeholder="Name of the Event?"/>
+                            <input v-model="new_event_location" placeholder="Where is it?"/>
+                            <textarea v-model="new_event_description" placeholder="Describe the Event."></textarea>
+                            <input type="number" v-model="new_event_price" placeholder="How much does it cost?"/>
+                            <input type="date" v-model="new_event_date" placeholder="What date will the Event happen?"/>
+                            <input type="time" v-model="new_event_time" placeholder="When during the day will it be?"/>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <div class="control">
+                            <input type="submit" @click="add_event" value="Post" class="button is-primary">
+                            <input type="submit" @click="set_add_status(false)" value="Cancel" class="button is-warning">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div v-else>
+                <h2 class="subtitle">New Events</h2>
+                <div class="section pt-0 container">
+                    <div v-for="e in events" class="card mb-3">
+                    <div class="card-header">
+                        <div class="card-header-title">{{e.event_name}}</div>
+                    </div>
+                    <div class="card-image">
+                        <figure class="image">
+                            <!-- Add something here for images -->
+                        </figure>
+                    </div>
+                    <div class="card-content">
+                        <div class="content">
+                            <div class="columns">
+                                <div class="column">
+                                    <span class="icon">
+                                      <i class="fa fa-map-marker" aria-hidden="true"></i>
+                                    </span>
+                                    {{e.location}}
+                                </div>
+                                <div class="column">
+                                    {{e.when}}
+                                </div>
+                                <div class="column">
+                                    <span class="icon">
+                                      <i class="fa fa-glass" aria-hidden="true"></i>
+                                    </span>
+                                    Substances
+                                </div>
+                                <div class="column">
+                                    <div v-if="e.price === 0">
+                                      Free
+                                    </div>
+                                    <div v-else>
+                                      ${{e.price}}
+                                    </div>
+                                    <span class="icon">
+                                      <i class="fa fa-ticket" aria-hidden="true"></i>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="mt-1">{{e.description}}</p>
+                        <button v-if="e.attending" @click="toggle_attending(e._idx)" class="button is-primary">
+                            <i class="fa fa-minus fa-fw"></i>Unattend
+                        </button>
+                        <button v-else @click="toggle_attending(e._idx)" class="button is-primary">
+                            <i class="fa fa-plus fa-fw"></i>Attend
+                        </button>
+                    </div>
+                </div>
+                </div>
+            </div>
+        </div>
+        <div class="column is-3 box">
+            <h2 class="subtitle">Messages</h2>
+            <div class="card mb-3"> <!-- Begin message card-->
+              <div class="card-header">
+                <div class="card-header-subtitle">
+                    <!-- label message by recipient -->
+                </div>
+              </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 
 [[block page_scripts]]
 <!-- Loads the index-specific js for Vue -->
 <script>
-  let my_callback_url = "[[=XML(my_callback_url)]]";
+  let load_feed_url = "[[=XML(load_feed_url)]]";
+  let add_event_url = "[[=XML(add_event_url)]]";
+  let edit_event_url = "[[=XML(edit_event_url)]]";
+  let delete_event_url = "[[=XML(delete_event_url)]]";
+  let load_attendees_url = "[[=XML(load_attendees_url)]]";
+  let set_attending_url = "[[=XML(set_attending_url)]]";
+  let send_message_url = "[[=XML(send_message_url)]]";
+  let load_messages_url = "[[=XML(load_messages_url)]]";
 </script>
 <script src="js/index.js"></script>
 [[end]]

@@ -31,69 +31,38 @@ from py4web import action, request, abort, redirect, URL, response
 from yatl.helpers import A
 from .common import db, session, T, cache, auth, logger, authenticated, unauthenticated, flash
 from py4web.utils.url_signer import URLSigner
-from .models import get_user_email
+from .models import get_user_email, get_user
 from py4web.utils.form import Form, FormStyleBulma
 from .common import Field
 
 url_signer = URLSigner(session)
 
 @action('index')
-@action.uses('index.html', db, auth, url_signer)
+@action.uses('index.html', db, auth.user, url_signer)
 def index():
-    if auth.user_id:
-        redirect(URL("feed"))
     return dict(
         # COMPLETE: return here any signed URLs you need.
-        my_callback_url = URL('my_callback', signer=url_signer),
+        load_feed_url=URL('load_feed', signer=url_signer),
+        load_myevents_url=URL('myevents', signer=url_signer),
+        add_event_url=URL('add', signer=url_signer),
+        edit_event_url=URL('edit', signer=url_signer),
+        delete_event_url=URL('delete', signer=url_signer),
+        load_attendees_url=URL('attendees', signer=url_signer),
+        set_attending_url=URL('attend', signer=url_signer),
+        send_message_url=URL('message', signer=url_signer),
+        load_messages_url=URL('load_messages', signer=url_signer),
     )
 
-@action('feed') # /fixtures_example/index
-@action.uses('feed.html', url_signer, db, auth.user)
-def index():
-    rows = db(db.event).select(orderby=db.event.date|db.event.time)
+@action('load_feed')
+@action.uses(url_signer.verify(), db, auth.user)
+def load_feed():
+    user_email = get_user_email()
+    events = db(db.event).select(orderby=db.event.date | db.event.time)
     attending = db(
         (db.attendees.user_id == auth.user_id) &
         (db.event.id == db.attendees.event_id)
-    ).select(db.event.id, db.event.host, db.event.event_name,
-             db.event.location, db.event.price, db.event.date,
-             db.event.time)
-    sent_messages = db(
-        (db.messages.user_from == get_user_email())
-    ).select()
-    received_messages = db(
-        (db.messages.user_to == get_user_email())
-    ).select()
-    sent_dict = {} # dictionary w/ keys = recipients and values = list of messages 
-    received_dict = {} # dictionary w/ keys = recipients and values = list of messages 
-    # IDEA: Make dictionary with key = "user + recipient" and value = another dict with time as key and value = message
-    #   with a 0 or 1 as the first character depending on whether it is from the sender or receiver
-    mega_dict = {} # {'blah@ucsc.edunoah@ucsc.edu': {'12-3-4 2:00:32:32432423': MESSAGE, '12-4-4 2:00:32:32432423': AnotherMESSAGE}}
-    for sent_message in sent_messages:
-        recipient = sent_message['user_to']
-        sender = sent_message['user_from']
-        key = recipient + sender # mega_dict key = combo of sender and recipient
-        #print("recipient:", sent_message['user_to'])
-        #print("SENT MESSAGE:", sent_message)
-        message_text = "1" + sent_message['message']
-        time_stamp = sent_message['date']
-        if key not in mega_dict:
-            mega_dict[key] = {}
-        mega_dict[key][time_stamp] = message_text
-    for received_message in received_messages:
-        # Sender and recipient are swapped!
-        sender = received_message['user_to']
-        recipient = received_message['user_from']
-        key = recipient + sender # key = combo of sender and recipient
-        #print("RECEIVED KEY:", key)
-        message_text = "0" + received_message['message']
-        time_stamp = received_message['date']
-        if key not in mega_dict:
-            mega_dict[key] = {}
-        mega_dict[key][time_stamp] = message_text
-    for key in mega_dict:
-        mega_dict[key] = ct.OrderedDict(sorted(mega_dict[key].items()))
-    #print(mega_dict)
-    return dict(rows=rows, attending=attending, mega_dict=mega_dict, url_signer=url_signer)
+    ).select(db.attendees.event_id).as_list()
+    return dict(events=events, attending=attending, user_email=user_email)
 
 
 @action('myevents')
@@ -106,16 +75,20 @@ def myevents():
      ).select(db.event.id, db.event.host, db.event.event_name, db.event.location, db.event.price)
     return dict(rows=rows, attending=attending, url_signer=url_signer)
 
-@action('add', method=["GET", "POST"])
-@action.uses('add.html', db, session, auth.user)
+@action('add', method="POST")
+@action.uses(url_signer.verify(), db, session, auth.user)
 def add():
-    # Insert form: no record= in it.
-    form = Form(db.event, csrf_session=session, formstyle=FormStyleBulma)
-    if form.accepted:
-        # We simply redirect; the insertion already happened.
-        redirect(URL('index'))
-    # Either this is a GET request, or this is a POST but not accepted = with errors.
-    return dict(form=form)
+    id = db.event.insert(
+        host=request.json.get('event_host'),
+        event_name=request.json.get('event_name'),
+        location=request.json.get('event_location'),
+        description=request.json.get('event_description'),
+        price=request.json.get('event_price'),
+        date=request.json.get('event_date'),
+        time=request.json.get('event_time'),
+    )
+    event = db.event[id]
+    return dict(event=event)
 
 # This endpoint will be used for URLs of the form /edit/k where k is the event id.
 @action('edit/<event_id:int>', method=["GET", "POST"])
@@ -135,12 +108,15 @@ def edit(event_id=None):
         redirect(URL('index'))
     return dict(form=form)
 
-@action('delete/<event_id:int>')
+@action('delete')
 @action.uses(db, session, auth.user, url_signer.verify())
-def delete(event_id=None):
+def delete():
+    event_id = request.params.get('id')
     assert event_id is not None
+    event = db.event[event_id]
+    assert event.created_by == get_user_email()
     db(db.event.id == event_id).delete()
-    redirect(URL('myevents'))
+    return "ok"
 
 @action('attendees/<event_id:int>')
 @action.uses('attendees.html', db, session, auth.user)
@@ -155,61 +131,76 @@ def attendees(event_id=None):
     ).select(db.auth_user.first_name, db.auth_user.last_name)
     return dict(rows=rows, event=event)
 
-@action('attend/<event_id:int>')
-@action.uses(db, session, auth.user)
-def attend(event_id=None):
+@action('attend', method="POST")
+@action.uses(url_signer.verify(), db, session, auth.user)
+def attend():
+    event_id = request.json.get('event_id')
+    status = request.json.get('status')
+    assert event_id is not None and status is not None
+    db.attendees.update_or_insert(
+        ((db.attendees.event_id == event_id) & (db.attendees.user_id == get_user())),
+        event_id=event_id,
+        user_id=get_user(),
+        attending=status,
+    )
+    return "ok"
+
+@action('message/<event_id>', method = ["GET", "POST"])
+@action.uses('message.html', db, session, auth.user, url_signer)
+def message(event_id=None):
     assert event_id is not None
     e = db.event[event_id]
     if e is None:
         redirect(URL('index'))
-    a = db(
-        (db.attendees.event_id == event_id) &
-        (db.attendees.user_id == auth.user_id)
-    )
-    if a.select().first() is None:
-        db.attendees.insert(event_id=event_id, user_id=auth.user_id)
-    else:
-        a.delete()
-    redirect(URL('index'))
-
-@action('message/<created_by>', method = ["GET", "POST"])
-@action.uses('message.html', db, session, auth.user, url_signer)
-def message(created_by=None):
-    assert created_by is not None
-    # use a when a guest is starting the conversation and the users are not in messages db yet
-    a = db(
-        (db.event.created_by == created_by)
-    ).select().first()
-    # use b when a convo already exists and both names are in the messages db
-    b = db(
-        ((db.messages.user_from + db.messages.user_to) == created_by)
-    ).select().first()
-    print("QUERY B:", b)
+    h = db(db.auth_user.email == e.created_by).select(db.auth_user.id).first()
+    if h is None:
+        redirect(URL('index'))
     form = Form([Field('note', 'text')],  csrf_session=session, formstyle=FormStyleBulma)
     if form.accepted:
         note = form.vars['note']
-        cur_time = datetime.datetime.utcnow()
-        #print("TIME:", cur_time)
-        event = 0
-        to = ''
-        # affiliate message streams with events
-        if b!= None:
-            event = None # placeholder, eventually we will find a way to link events to conversations
-            to = b['user_from'] 
-            #print("TO:", to)
-        elif a != None:
-            event = a['id'] 
-            to = a['created_by'] # send message to host
         db.messages.insert(
-            user_from=get_user_email(),
-            user_to=to,
+            host_id=h.id,
+            sender=auth.user_id,
+            receiver=h.id,
             message=note,
-            event_id=event,
-            date=cur_time, # DATETIME STUFF GIVING ME ERRORS
-            #time=cur_time.time(),
+            event_id=event_id,
         )
         redirect(URL('feed'))
     return dict(form=form)
+
+@action('respond/<event_id>/<user_id>', method=["GET", "POST"])
+@action.uses('message.html', db, session, auth.user, url_signer)
+def response(event_id=None, user_id=None):
+    assert event_id is not None and user_id is not None
+    e = db.event[event_id]
+    if e is None:
+        redirect(URL('index'))
+    h = db(db.auth_user.email == e.created_by).select(db.auth_user.id).first()
+    if h.id != auth.user_id:
+        redirect(URL('index'))
+    form = Form([Field('note', 'text')], csrf_session=session, formstyle=FormStyleBulma)
+    if form.accepted:
+        note = form.vars['note']
+        db.messages.insert(
+            host_id=h.id,
+            sender=h.id,
+            receiver=user_id,
+            message=note,
+            event_id=event_id,
+        )
+        redirect(URL('feed'))
+    return dict(form=form)
+
+@action('load_messages/<event_id>')
+@action.uses(db, session, auth.user, url_signer.verify())
+def load_messages(event_id=None):
+    assert event_id is not None
+    e = db.event[event_id]
+    messages = db(
+        (db.messages.event_id == e.id) &
+        ((db.messages.sender == auth.user_id) | (db.message.receiver == auth.user_id))
+    ).select(orderby=db.messages.date).as_list()
+    return dict(messages=messages)
 
 def download1():
     return response.download(request, db)

@@ -121,7 +121,7 @@
                             <a class="button is-primary is-fullwidth" href="[[=URL('attend', row.id)]]">
                                 Attend
                             </a>
-                            <a class="button is-primary is-half" href="[[=URL('message', row.created_by)]]">
+                            <a class="button is-primary is-half" href="[[=URL('message', row.id)]]">
                                 Message
                             </a>
                         </div>
@@ -138,38 +138,14 @@
             <h2 class="subtitle">
               Messages
             </h2>
-            [[for recipient in mega_dict:]]
-            
+                <!-- Loop over messages -->
             <div class="card mb-3"> <!-- Begin message card-->
               <div class="card-header">
                 <div class="card-header-subtitle">
-                  Message with [[=recipient]]:
+                    <!-- label message by recipient -->
                 </div>
               </div>
-                [[for time_stamp in mega_dict[recipient]:]]
-                  [[if mega_dict[recipient][time_stamp][0] == '1':]]
-                  <br>
-                  <div class = "button is-primary is-pulled-right">
-                      <p>
-                        [[=mega_dict[recipient][time_stamp][1:]]]
-                      </p>
-                  </div>
-                  <br>
-                  [[else:]]
-                  <div class = "button">
-                    <p>
-                      [[=mega_dict[recipient][time_stamp][1:]]]
-                    </p>
-                  </div>
-                  <br>
-                  [[pass]]
-
-                [[pass]]
               <!-- Reply button-->
-              <a class="button" href="[[=URL('message', recipient)]]">
-                <span class="icon"><i class="fa fa-edit"></i></span>
-                <span>Reply</span>
-              </a>
             </div> <!-- End message card-->
             [[pass]]
           </div>
