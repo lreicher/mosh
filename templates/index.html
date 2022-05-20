@@ -35,28 +35,26 @@
                 <th></th>
             </tr>
             <template v-for="e in events">
-                <div v-if="e.created_by === user_email">
-                    <tr>
-                        <td>{{e.host}}</td>
-                        <td>{{e.event_name}}</td>
-                        <td>{{e.location}}</td>
-                        <td>{{e.description}}</td>
-                        <td>{{e.price}}</td>
-                        <td>{{e.when}}</td>
-                        <td>{{e.creation_date}}</td>
-                        <td>
-                            <button class="button is-primary">
-                                <i class="fa fa-pencil fa-fw"></i>Edit Event
-                            </button>
-                            <button @click="delete_event(e._idx)" class="button is-danger">
-                                <i class="fa fa-pencil fa-fw"></i>Delete Event
-                            </button>
-                            <button class="button is-primary">
-                                <i class="fa fa-users fa-fw"></i>View Attendees
-                            </button>
-                        </td>
-                    </tr>
-                </div>
+                <tr v-if="e.created_by === user_email">
+                    <td>{{e.host}}</td>
+                    <td>{{e.event_name}}</td>
+                    <td>{{e.location}}</td>
+                    <td>{{e.description}}</td>
+                    <td>{{e.price}}</td>
+                    <td>{{e.when}}</td>
+                    <td>{{e.creation_date}}</td>
+                    <td>
+                        <button class="button is-primary">
+                            <i class="fa fa-pencil fa-fw"></i>Edit Event
+                        </button>
+                        <button @click="delete_event(e._idx)" class="button is-danger">
+                            <i class="fa fa-pencil fa-fw"></i>Delete Event
+                        </button>
+                        <button class="button is-primary">
+                            <i class="fa fa-users fa-fw"></i>View Attendees
+                        </button>
+                    </td>
+                </tr>
             </template>
         </table>
     </div>
