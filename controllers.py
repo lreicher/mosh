@@ -51,6 +51,7 @@ def index():
         set_attending_url=URL('attend', signer=url_signer),
         send_message_url=URL('message', signer=url_signer),
         load_messages_url=URL('load_messages', signer=url_signer),
+        my_callback_url = URL('my_callback', signer=url_signer),
     )
 
 @action('load_feed')

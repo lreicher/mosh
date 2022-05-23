@@ -21,42 +21,52 @@
 
     <!-- MyEvents Page -->
     <div v-if="view_myevents" class="container">
-        <table class="table is-striped is-fullwidth">
-            <tr>
-                <th>Host</th>
-                <th>Event Name</th>
-                <th>Location</th>
-                <th>Description</th>
-                <th>Price</th>
-                <th>Created By</th>
-                <th>Creation Date</th>
-                <th></th>
-                <th></th>
-                <th></th>
-            </tr>
-            <template v-for="e in events">
-                <tr v-if="e.created_by === user_email">
-                    <td>{{e.host}}</td>
-                    <td>{{e.event_name}}</td>
-                    <td>{{e.location}}</td>
-                    <td>{{e.description}}</td>
-                    <td>{{e.price}}</td>
-                    <td>{{e.when}}</td>
-                    <td>{{e.creation_date}}</td>
-                    <td>
-                        <button class="button is-primary">
-                            <i class="fa fa-pencil fa-fw"></i>Edit Event
-                        </button>
-                        <button @click="delete_event(e._idx)" class="button is-danger">
-                            <i class="fa fa-pencil fa-fw"></i>Delete Event
-                        </button>
-                        <button class="button is-primary">
-                            <i class="fa fa-users fa-fw"></i>View Attendees
-                        </button>
-                    </td>
-                </tr>
-            </template>
-        </table>
+        <div class="columns is-mobile">
+            <div class="column is-three-quarters">
+                <table class="table is-striped is-halfwidth">
+                    <tr>
+                        <th>Host</th>
+                        <th>Event Name</th>
+                        <th>Location</th>
+                        <th>Description</th>
+                        <th>Price</th>
+                        <th>Created By</th>
+                        <th>Creation Date</th>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                    <template v-for="e in events">
+                        <tr v-if="e.created_by === user_email">
+                            <td>{{e.host}}</td>
+                            <td>{{e.event_name}}</td>
+                            <td>{{e.location}}</td>
+                            <td>{{e.description}}</td>
+                            <td>{{e.price}}</td>
+                            <td>{{e.when}}</td>
+                            <td>{{e.creation_date}}</td>
+                            <td>
+                                <button class="button is-primary">
+                                    <i class="fa fa-pencil fa-fw"></i>Edit Event
+                                </button>
+                                <button @click="delete_event(e._idx)" class="button is-danger">
+                                    <i class="fa fa-pencil fa-fw"></i>Delete Event
+                                </button>
+                                <button class="button is-primary">
+                                    <i class="fa fa-users fa-fw"></i>View Attendees
+                                </button>
+                            </td>
+                        </tr>
+                    </template>
+                </table>
+            </div>
+            <div class="column is-one-quarter">
+                <div class="section" id="vue-target" v-cloak>
+                    <!-- Put here your Vue.js template -->
+                    <v-date-picker v-model='selectedDate' />
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Main Feed -->
@@ -189,6 +199,8 @@
   let set_attending_url = "[[=XML(set_attending_url)]]";
   let send_message_url = "[[=XML(send_message_url)]]";
   let load_messages_url = "[[=XML(load_messages_url)]]";
+  let my_callback_url = "[[=XML(my_callback_url)]]";
 </script>
+<script src='https://unpkg.com/v-calendar'></script>
 <script src="js/index.js"></script>
 [[end]]
