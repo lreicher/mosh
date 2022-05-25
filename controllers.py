@@ -51,6 +51,7 @@ def index():
         set_attending_url=URL('attend', signer=url_signer),
         send_message_url=URL('message', signer=url_signer),
         load_messages_url=URL('load_messages', signer=url_signer),
+        load_conversations_url=URL('load_conversations', signer=url_signer),
         my_callback_url = URL('my_callback', signer=url_signer),
     )
 
@@ -146,60 +147,53 @@ def attend():
     )
     return "ok"
 
-@action('message/<event_id>', method = ["GET", "POST"])
-@action.uses('message.html', db, session, auth.user, url_signer)
-def message(event_id=None):
-    assert event_id is not None
-    e = db.event[event_id]
-    if e is None:
-        redirect(URL('index'))
-    h = db(db.auth_user.email == e.created_by).select(db.auth_user.id).first()
-    if h is None:
-        redirect(URL('index'))
-    form = Form([Field('note', 'text')],  csrf_session=session, formstyle=FormStyleBulma)
-    if form.accepted:
-        note = form.vars['note']
-        db.messages.insert(
-            host_id=h.id,
-            sender=auth.user_id,
-            receiver=h.id,
-            message=note,
-            event_id=event_id,
-        )
-        redirect(URL('feed'))
-    return dict(form=form)
 
-@action('respond/<event_id>/<user_id>', method=["GET", "POST"])
-@action.uses('message.html', db, session, auth.user, url_signer)
-def response(event_id=None, user_id=None):
-    assert event_id is not None and user_id is not None
-    e = db.event[event_id]
-    if e is None:
-        redirect(URL('index'))
-    h = db(db.auth_user.email == e.created_by).select(db.auth_user.id).first()
-    if h.id != auth.user_id:
-        redirect(URL('index'))
-    form = Form([Field('note', 'text')], csrf_session=session, formstyle=FormStyleBulma)
-    if form.accepted:
-        note = form.vars['note']
-        db.messages.insert(
-            host_id=h.id,
-            sender=h.id,
-            receiver=user_id,
-            message=note,
-            event_id=event_id,
-        )
-        redirect(URL('feed'))
-    return dict(form=form)
-
-@action('load_messages/<event_id>')
+@action('start_conversation', method="POST")
 @action.uses(db, session, auth.user, url_signer.verify())
-def load_messages(event_id=None):
-    assert event_id is not None
+def start_conversation():
+    event_id = request.json.get('event_id')
+    user = get_user()
     e = db.event[event_id]
+    assert e is not None
+    host = db(db.auth_user.email == e.created_by).select(db.auth_user.id).first()
+    conversation_id = db.conversation.insert(
+        event_id=event_id,
+        host_id=host,
+        user_id=user,
+    )
+    return dict(conversation_id=conversation_id)
+
+
+@action('message', method="POST")
+@action.uses(db, session, auth.user, url_signer.verify())
+def message():
+    conversation_id = request.json.get('conversation_id')
+    message_body = request.json.get('message_body')
+    message_id = db.message.insert(
+        conversation_id=conversation_id,
+        message=message_body,
+        creator_id=get_user(),
+    )
+    new_message = db.message[message_id]
+    return dict(message=new_message)
+
+
+@action('load_conversations', method="POST")
+@action.uses(db, session, auth.user, url_signer.verify())
+def load_conversations():
+    conversations = db(
+        ((db.conversation.host_id == get_user()) | (db.conversation.user_id == get_user()))
+    ).select().as_list()
+    return dict(conversations=conversations)
+
+
+@action('load_messages', method="POST")
+@action.uses(db, session, auth.user, url_signer.verify())
+def load_messages():
+    conversation_id = response.json.get('conversation_id')
+    assert conversation_id is not None
     messages = db(
-        (db.messages.event_id == e.id) &
-        ((db.messages.sender == auth.user_id) | (db.message.receiver == auth.user_id))
+        (db.message.conversation_id == conversation_id)
     ).select(orderby=db.messages.date).as_list()
     return dict(messages=messages)
 

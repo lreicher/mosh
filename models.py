@@ -49,11 +49,16 @@ db.event.created_by.readable = db.event.created_by.writable = False
 db.event.creation_date.readable = db.event.creation_date.writable = False
 
 db.define_table(
-    'messages',
-    Field('host_id', 'references auth_user', requires=IS_NOT_EMPTY()),
-    Field('sender', 'references auth_user', requires=IS_NOT_EMPTY()),
-    Field('receiver', 'references auth_user', requires=IS_NOT_EMPTY()),
+    'conversation',
     Field('event_id', 'references event', requires=IS_NOT_EMPTY()),
+    Field('host_id', 'references auth_user', requires=IS_NOT_EMPTY()),
+    Field('user_id', 'references auth_user', requires=IS_NOT_EMPTY()),
+)
+
+db.define_table(
+    'message',
+    Field('conversation_id', 'references conversation', requires=IS_NOT_EMPTY()),
+    Field('creator_id', 'references auth_user', requires=IS_NOT_EMPTY()),
     Field('message', requires=IS_NOT_EMPTY()),
     Field('date', 'datetime', default=get_time),
 )

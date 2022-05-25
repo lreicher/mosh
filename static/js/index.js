@@ -12,6 +12,7 @@ let init = (app) => {
         user_email: "",
         user_name: "",
         events: [],
+        conversations: [],
         attending: [],
         messages: [],
         add_status: false,
@@ -61,6 +62,7 @@ let init = (app) => {
                     time: response.data.event.time,
                     when: response.data.event.when,
                     created_by: response.data.event.created_by,
+                    creation_date: response.data.event.creation_date,
                     attending: false,
                 });
                 app.enumerate(app.vue.events);
@@ -143,6 +145,11 @@ let init = (app) => {
                     }
                 }
             }
+        });
+        axios.get(load_conversations_url).then(function (response) {
+            let conversations = response.data.conversations;
+            app.enumerate(conversations);
+            app.vue.conversations = conversations;
         });
     };
 
