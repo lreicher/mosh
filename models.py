@@ -53,6 +53,8 @@ db.define_table(
     Field('event_id', 'references event', requires=IS_NOT_EMPTY()),
     Field('host_id', 'references auth_user', requires=IS_NOT_EMPTY()),
     Field('user_id', 'references auth_user', requires=IS_NOT_EMPTY()),
+    Field('host_name', requires=IS_NOT_EMPTY()),
+    Field('user_name', requires=IS_NOT_EMPTY()),
 )
 
 db.define_table(

@@ -169,6 +169,9 @@
                         <button v-else @click="toggle_attending(e._idx)" class="button is-primary">
                             <i class="fa fa-plus fa-fw"></i>Attend
                         </button>
+                        <button @click="start_conversation(e._idx)" class="button is-primary">
+                            <i class="fa fa-envelope fa-fw"></i>Start Conversation
+                        </button>
                     </div>
                 </div>
                 </div>
@@ -199,7 +202,8 @@
   let set_attending_url = "[[=XML(set_attending_url)]]";
   let send_message_url = "[[=XML(send_message_url)]]";
   let load_messages_url = "[[=XML(load_messages_url)]]";
-  let load_conversations_url = "[[XML(load_conversations_url)]]";
+  let load_conversations_url = "[[=XML(load_conversations_url)]]";
+  let start_conversation_url = "[[=XML(start_conversation_url)]]";
   let my_callback_url = "[[=XML(my_callback_url)]]";
 </script>
 <script src='https://unpkg.com/v-calendar'></script>

@@ -108,6 +108,27 @@ let init = (app) => {
         axios.post(set_attending_url, {event_id: event.id, status: event.attending});
     };
 
+    app.start_conversation = function (event_idx) {
+        let event = app.vue.events[event_idx];
+        const exists = (element) => element.event_id === event.id;
+        if (!(app.vue.conversations.some(exists))) {
+
+            axios.post(start_conversation_url, {event_id: event.id}).then(function (response) {
+                console.log(response);
+                app.vue.conversations.unshift(
+                    response.data.conversation
+                );
+                
+            });
+            app.enumerate(app.vue.conversations);
+        
+        }
+
+    };
+
+
+
+
 
     // This contains all the methods.
     app.methods = {
@@ -117,6 +138,7 @@ let init = (app) => {
         set_add_status: app.set_add_status,
         set_view_myevents_status: app.set_view_myevents_status,
         toggle_attending: app.toggle_attending,
+        start_conversation: app.start_conversation,
 
     };
 
@@ -136,6 +158,11 @@ let init = (app) => {
             app.vue.events = events;
             app.vue.user_email = response.data.user_email;
             app.vue.attending = response.data.attending;
+
+            let conversations = response.data.conversations;
+            app.enumerate(conversations);
+            app.vue.conversations = conversations;
+
         }).then(() => {
             for (let event of app.vue.events) {
                 for (let attend of app.vue.attending) {
@@ -146,11 +173,13 @@ let init = (app) => {
                 }
             }
         });
-        axios.get(load_conversations_url).then(function (response) {
-            let conversations = response.data.conversations;
-            app.enumerate(conversations);
-            app.vue.conversations = conversations;
-        });
+        // axios.get(load_conversations_url).then(function (response) {
+        //     console.log(response)
+        //     let conversations = response.data.conversations;
+        //     app.enumerate(conversations);
+        //     app.vue.conversations = conversations;
+        //     
+        // });
     };
 
     // Call to the initializer.

@@ -52,6 +52,7 @@ def index():
         send_message_url=URL('message', signer=url_signer),
         load_messages_url=URL('load_messages', signer=url_signer),
         load_conversations_url=URL('load_conversations', signer=url_signer),
+        start_conversation_url=URL('start_conversation', signer=url_signer),
         my_callback_url = URL('my_callback', signer=url_signer),
     )
 
@@ -64,7 +65,15 @@ def load_feed():
         (db.attendees.user_id == auth.user_id) &
         (db.event.id == db.attendees.event_id)
     ).select(db.attendees.event_id).as_list()
-    return dict(events=events, attending=attending, user_email=user_email)
+
+
+    conversations = db(
+        ((db.conversation.host_id == get_user()) | (db.conversation.user_id == get_user()))
+    ).select().as_list()
+    #print("CONVOS: ", conversations)
+
+
+    return dict(events=events, attending=attending, user_email=user_email, conversations=conversations)
 
 
 @action('myevents')
@@ -152,16 +161,28 @@ def attend():
 @action.uses(db, session, auth.user, url_signer.verify())
 def start_conversation():
     event_id = request.json.get('event_id')
+    
     user = get_user()
     e = db.event[event_id]
     assert e is not None
+    # host id:
     host = db(db.auth_user.email == e.created_by).select(db.auth_user.id).first()
+    # get row for host 
+    hr = db(db.auth_user.id == host).select().first()
+    host_name = hr.first_name + " " + hr.last_name if hr is not None else "Unknown"
+    # get row for user
+    ur = db(db.auth_user.id == user).select().first()
+    user_name = ur.first_name + " " + ur.last_name if ur is not None else "Unknown"
+    
     conversation_id = db.conversation.insert(
         event_id=event_id,
-        host_id=host,
+        host_id=host.id,
         user_id=user,
+        host_name=host_name,
+        user_name=user_name,
     )
-    return dict(conversation_id=conversation_id)
+    conversation = db.conversation[conversation_id]
+    return dict(conversation=conversation)
 
 
 @action('message', method="POST")
@@ -178,12 +199,13 @@ def message():
     return dict(message=new_message)
 
 
-@action('load_conversations', method="POST")
+@action('load_conversations', method="GET")
 @action.uses(db, session, auth.user, url_signer.verify())
 def load_conversations():
     conversations = db(
         ((db.conversation.host_id == get_user()) | (db.conversation.user_id == get_user()))
     ).select().as_list()
+    #print("CONVOS: ", conversations)
     return dict(conversations=conversations)
 
 
