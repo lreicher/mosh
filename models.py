@@ -61,7 +61,7 @@ db.define_table(
 db.define_table(
     'message',
     Field('conversation_id', 'references conversation', requires=IS_NOT_EMPTY()),
-    Field('creator_id', 'references auth_user', requires=IS_NOT_EMPTY()),
+    Field('creator_email', requires=IS_NOT_EMPTY()),
     Field('message', requires=IS_NOT_EMPTY()),
     Field('date', 'datetime', default=get_time),
 )

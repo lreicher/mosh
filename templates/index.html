@@ -180,7 +180,7 @@
         <div class="column is-3 box">
             <h2 class="subtitle">Messages</h2>
             <div v-for="c in conversations" class="card mb-3" > <!-- Begin message card-->
-              <div class="card-header">
+              <div @click="load_conversation(c._idx)" class="card-header"> <!--PUT @CLICK HERE FOR OPEN CONVO METHOD -->
                 <!-- recipient name, depending on whether user is the host or not -->
                 <div v-if="c.host_email == user_email"class="card-header-subtitle">
                     {{c.user_name}}
@@ -190,8 +190,61 @@
                 </div>
               </div>
             </div>
+
+            <div v-if="open_conversation !== -1" class="modal is-active">
+                <div class="modal-background"></div>
+                <div class="modal-card">
+                    <header class="modal-card-head">
+                        <span v-if="open_conversation.host_email == user_email">
+                            <p class="modal-card-title">Message With {{open_conversation.user_name}}</p>
+                        </span>
+                        <span v-else>
+                            <p class="modal-card-title">Message With {{open_conversation.host_name}}</p>
+                        </span>
+                        
+                    </header>
+                    <section class="modal-card-body">
+                        <!-- Display messages -->
+                        
+                        <span v-for="message in messages">
+                            <span v-if="message.creator_email === user_email">
+                                <button class="is-pulled-right">
+                                    {{message.message}}
+                                </button>
+                                <br>
+                            </span>
+                            <span v-else>
+                                <button class = "is-pulled-left">
+                                    {{message.message}}
+                                </button>   
+                                <br>
+                            </span>
+                            
+                        </span>
+                        
+                    </section>
+                    <footer class="modal-card-foot">
+                        <div class = "form">
+                            <div class = "field">
+                                <div class = "control">
+                                    <textarea v-model="add_message" class="textarea" placeholder="Write a message"></textarea>
+                                </div>
+                            </div>
+                            <div class = "field">
+                                <div class = "control">
+                                    <button @click = "send_message(open_conversation._idx)" class="button is-success">Send</button>
+                                    <button @click = "close_conversation()" class="button">Cancel</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </footer>
+                </div>
+            </div>
+
         </div>
     </div>
+
 </div>
 
 

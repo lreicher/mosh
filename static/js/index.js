@@ -24,7 +24,8 @@ let init = (app) => {
         new_event_price: 0,
         new_event_date: "",
         new_event_time: "",
-        open_conversation: -1
+        open_conversation: -1,
+        add_message: ""
         // Complete as you see fit.
     };
 
@@ -122,13 +123,33 @@ let init = (app) => {
                 
             });
             app.enumerate(app.vue.conversations);
-        
         }
+    };
+
+    // loads a single conversation into a modal
+    app.load_conversation = function (convo_idx) {
+        let convo = app.vue.conversations[convo_idx];
+        app.vue.open_conversation = convo;
+        axios.get(load_messages_url, {params: {conversation_id: convo.id}}).then(function (response) {
+            app.vue.messages = response.data.messages;
+        });
 
     };
 
+    app.close_conversation = function () {
+        app.vue.messages = [];
+        app.vue.open_conversation = -1;
+        app.vue.add_message = "";
+    };
 
-
+    app.send_message = function (convo_idx) {
+        let convo = app.vue.conversations[convo_idx];
+        axios.post(send_message_url, {conversation_id: convo.id, message_body: app.vue.add_message}).then(function (response) {
+            app.vue.messages.push(response.data.message);
+            app.enumerate(app.vue.messages);
+        });
+        app.vue.add_message = "";
+    };
 
 
     // This contains all the methods.
@@ -140,7 +161,9 @@ let init = (app) => {
         set_view_myevents_status: app.set_view_myevents_status,
         toggle_attending: app.toggle_attending,
         start_conversation: app.start_conversation,
-
+        load_conversation: app.load_conversation,
+        close_conversation: app.close_conversation,
+        send_message: app.send_message,
     };
 
     // This creates the Vue instance.

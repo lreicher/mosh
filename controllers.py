@@ -195,7 +195,7 @@ def message():
     message_id = db.message.insert(
         conversation_id=conversation_id,
         message=message_body,
-        creator_id=get_user(),
+        creator_email=get_user_email(),
     )
     new_message = db.message[message_id]
     return dict(message=new_message)
@@ -211,14 +211,14 @@ def load_conversations():
     return dict(conversations=conversations)
 
 
-@action('load_messages', method="POST")
+@action('load_messages', method="GET")
 @action.uses(db, session, auth.user, url_signer.verify())
 def load_messages():
-    conversation_id = response.json.get('conversation_id')
+    conversation_id = request.params.get('conversation_id')
     assert conversation_id is not None
     messages = db(
         (db.message.conversation_id == conversation_id)
-    ).select(orderby=db.messages.date).as_list()
+    ).select(orderby=db.message.date).as_list()
     return dict(messages=messages)
 
 def download1():
