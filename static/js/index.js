@@ -114,15 +114,10 @@ let init = (app) => {
         let event = app.vue.events[event_idx];
         const exists = (element) => element.event_id === event.id;
         if (!(app.vue.conversations.some(exists))) {
-
             axios.post(start_conversation_url, {event_id: event.id}).then(function (response) {
-                console.log(response);
-                app.vue.conversations.unshift(
-                    response.data.conversation
-                );
-                
+                app.vue.conversations.push(response.data.conversation);
+                app.enumerate(app.vue.conversations);
             });
-            app.enumerate(app.vue.conversations);
         }
     };
 
@@ -133,7 +128,6 @@ let init = (app) => {
         axios.get(load_messages_url, {params: {conversation_id: convo.id}}).then(function (response) {
             app.vue.messages = response.data.messages;
         });
-
     };
 
     app.close_conversation = function () {

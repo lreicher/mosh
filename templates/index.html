@@ -208,15 +208,15 @@
                         
                         <span v-for="message in messages">
                             <span v-if="message.creator_email === user_email">
-                                <button class="is-pulled-right">
+                                <div class="box is-pulled-right has-background-info">
                                     {{message.message}}
-                                </button>
+                                </div>
                                 <br>
                             </span>
                             <span v-else>
-                                <button class = "is-pulled-left">
+                                <div class="box is-pulled-left">
                                     {{message.message}}
-                                </button>   
+                                </div>
                                 <br>
                             </span>
                             
