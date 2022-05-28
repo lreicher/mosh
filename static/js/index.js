@@ -24,6 +24,7 @@ let init = (app) => {
         new_event_price: 0,
         new_event_date: "",
         new_event_time: "",
+        open_conversation: -1
         // Complete as you see fit.
     };
 

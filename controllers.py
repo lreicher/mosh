@@ -170,6 +170,7 @@ def start_conversation():
     # get row for host 
     hr = db(db.auth_user.id == host).select().first()
     host_name = hr.first_name + " " + hr.last_name if hr is not None else "Unknown"
+    host_email = hr.email
     # get row for user
     ur = db(db.auth_user.id == user).select().first()
     user_name = ur.first_name + " " + ur.last_name if ur is not None else "Unknown"
@@ -180,6 +181,7 @@ def start_conversation():
         user_id=user,
         host_name=host_name,
         user_name=user_name,
+        host_email=host_email,
     )
     conversation = db.conversation[conversation_id]
     return dict(conversation=conversation)

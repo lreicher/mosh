@@ -169,7 +169,7 @@
                         <button v-else @click="toggle_attending(e._idx)" class="button is-primary">
                             <i class="fa fa-plus fa-fw"></i>Attend
                         </button>
-                        <button @click="start_conversation(e._idx)" class="button is-primary">
+                        <button v-if="e.created_by !== user_email" @click="start_conversation(e._idx)" class="button is-primary">
                             <i class="fa fa-envelope fa-fw"></i>Start Conversation
                         </button>
                     </div>
@@ -179,10 +179,14 @@
         </div>
         <div class="column is-3 box">
             <h2 class="subtitle">Messages</h2>
-            <div class="card mb-3"> <!-- Begin message card-->
+            <div v-for="c in conversations" class="card mb-3" > <!-- Begin message card-->
               <div class="card-header">
-                <div class="card-header-subtitle">
-                    <!-- label message by recipient -->
+                <!-- recipient name, depending on whether user is the host or not -->
+                <div v-if="c.host_email == user_email"class="card-header-subtitle">
+                    {{c.user_name}}
+                </div>
+                <div v-else class="card-header-subtitle">
+                    {{c.host_name}}
                 </div>
               </div>
             </div>
