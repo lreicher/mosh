@@ -25,7 +25,14 @@ let init = (app) => {
         new_event_date: "",
         new_event_time: "",
         open_conversation: -1,
-        add_message: ""
+        add_message: "",
+        attributes: [ 
+            {
+                key: 'today',
+                highlight: true,
+                dates: new Date(),
+            },
+        ]
         // Complete as you see fit.
     };
 

@@ -61,12 +61,10 @@
                 </table>
             </div>
             <div class="column is-one-quarter">
-                <div class="section" id="calendar_vue">
+                <div class="section" id="vue-target">
                     <v-calendar 
                         :attributes='attributes'
                         :min-date="new Date()"
-                        :rows="2"
-                        :columns="2"
                     >
                     </v-calendar>
                 </div>
@@ -260,7 +258,6 @@
 <!-- 2. Link VCalendar Javascript (Plugin automatically installed) -->
 <script src='https://unpkg.com/v-calendar'></script>
 <!--3. Create the Vue instance-->
-<script src="js/calendar.js"></script>
 <script>
   let load_feed_url = "[[=XML(load_feed_url)]]";
   let add_event_url = "[[=XML(add_event_url)]]";
