@@ -61,9 +61,14 @@
                 </table>
             </div>
             <div class="column is-one-quarter">
-                <div class="section" id="vue-target" v-cloak>
-                    <!-- Put here your Vue.js template -->
-                    <v-date-picker v-model="date" />
+                <div class="section" id="calendar_vue">
+                    <v-calendar 
+                        :attributes='attributes'
+                        :min-date="new Date()"
+                        :rows="2"
+                        :columns="2"
+                    >
+                    </v-calendar>
                 </div>
             </div>
         </div>
@@ -250,6 +255,12 @@
 
 [[block page_scripts]]
 <!-- Loads the index-specific js for Vue -->
+<!-- 1. Link Vue Javascript -->
+<script src='https://unpkg.com/vue/dist/vue.js'></script>       
+<!-- 2. Link VCalendar Javascript (Plugin automatically installed) -->
+<script src='https://unpkg.com/v-calendar'></script>
+<!--3. Create the Vue instance-->
+<script src="js/calendar.js"></script>
 <script>
   let load_feed_url = "[[=XML(load_feed_url)]]";
   let add_event_url = "[[=XML(add_event_url)]]";
@@ -263,6 +274,5 @@
   let start_conversation_url = "[[=XML(start_conversation_url)]]";
   let my_callback_url = "[[=XML(my_callback_url)]]";
 </script>
-<script src='https://unpkg.com/v-calendar'></script>
 <script src="js/index.js"></script>
 [[end]]
