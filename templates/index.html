@@ -211,28 +211,28 @@
                     <section class="modal-card-body">
                         <!-- Display messages -->
                         
-                        <span v-for="message in messages">
-                            <span v-if="message.creator_email === user_email">
-                                <div class="box is-pulled-right has-background-info">
+                        <div v-for="message in messages" class="columns is-vertical">
+                            <div v-if="message.creator_email === user_email" class="column">
+                                <div class="box my-1 is-pulled-right has-background-info">
                                     {{message.message}}
                                 </div>
                                 <br>
-                            </span>
-                            <span v-else>
-                                <div class="box is-pulled-left">
+                            </div>
+                            <div v-else class="column">
+                                <div class="box my-1 is-pulled-left">
                                     {{message.message}}
                                 </div>
                                 <br>
-                            </span>
+                            </div>
                             
-                        </span>
+                        </div>
                         
                     </section>
                     <footer class="modal-card-foot">
                         <div class = "form">
                             <div class = "field">
                                 <div class = "control">
-                                    <textarea v-model="add_message" class="textarea" placeholder="Write a message"></textarea>
+                                    <input v-model="add_message" class="input is-info" placeholder="Write a message"></input>
                                 </div>
                             </div>
                             <div class = "field">
