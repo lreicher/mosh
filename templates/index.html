@@ -215,7 +215,7 @@
                     <section class="modal-card-body">
                         <!-- Display messages -->
                         
-                        <div v-for="message in messages" class="columns is-vertical">
+                        <div v-for="message in messages" class="columns is-vertical is-mobile">
                             <div v-if="message.creator_email === user_email" class="column">
                                 <div class="box my-1 is-pulled-right has-background-info">
                                     {{message.message}}

@@ -65,7 +65,7 @@ def load_feed():
     attending = db(
         (db.attendees.user_id == auth.user_id) &
         (db.event.id == db.attendees.event_id)
-    ).select(db.attendees.event_id).as_list()
+    ).select(db.attendees.event_id,db.attendees.attending).as_list()
     conversations = db(
         ((db.conversation.host_id == get_user()) | (db.conversation.user_id == get_user()))
     ).select().as_list()
@@ -133,8 +133,10 @@ def attendees(event_id=None):
 @action('attend', method="POST")
 @action.uses(url_signer.verify(), db, session, auth.user)
 def attend():
+    print("Toggling Attend")
     event_id = request.json.get('event_id')
     status = request.json.get('status')
+    print("Event_id", event_id, "Status", status)
     assert event_id is not None and status is not None
     db.attendees.update_or_insert(
         ((db.attendees.event_id == event_id) & (db.attendees.user_id == get_user())),
@@ -142,6 +144,7 @@ def attend():
         user_id=get_user(),
         attending=status,
     )
+    print("Updated or inserteed")
     return "ok"
 
 @action('start_conversation', method="POST")

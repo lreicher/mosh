@@ -262,7 +262,7 @@ let init = (app) => {
         }).then(() => {
             for (let event of app.vue.events) {
                 for (let attend of app.vue.attending) {
-                    if (event.id == attend.event_id) {
+                    if (event.id === attend.event_id && attend.attending === true) {
                         event.attending = true;
                         break;
                     }
