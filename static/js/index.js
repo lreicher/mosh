@@ -26,6 +26,11 @@ let init = (app) => {
         new_event_time: "",
         open_conversation: -1,
         add_message: "",
+        selection_done: false,
+        uploading: false,
+        uploaded_file: "",
+        uploaded: false,
+        img_url: "",
         attributes: [ 
             {
                 key: 'today',
@@ -215,6 +220,43 @@ let init = (app) => {
         app.vue.add_message = "";
     };
 
+    app.select_file = function (event) {
+        // Reads the file.
+        let input = event.target;
+        app.file = input.files[0];
+        if (app.file) {
+            app.vue.selection_done = true;
+            // We read the file.
+            let reader = new FileReader();
+            reader.addEventListener("load", function () {
+                app.vue.img_url = reader.result;
+            });
+            reader.readAsDataURL(app.file);
+        }
+    };
+
+    app.upload_complete = function (file_name, file_type) {
+        app.vue.uploading = false;
+        app.vue.uploaded = true;
+    };
+
+    app.upload_file = function () {
+        if (app.file) {
+            let file_type = app.file.type;
+            let file_name = app.file.name;
+            let full_url = file_upload_url + "&file_name=" + encodeURIComponent(file_name)
+                + "&file_type=" + encodeURIComponent(file_type);
+            // Uploads the file, using the low-level streaming interface. This avoid any
+            // encoding.
+            app.vue.uploading = true;
+            let req = new XMLHttpRequest();
+            req.addEventListener("load", function () {
+                app.upload_complete(file_name, file_type)
+            });
+            req.open("PUT", full_url, true);
+            req.send(app.file);
+        }
+    };
 
     // This contains all the methods.
     app.methods = {
@@ -230,6 +272,8 @@ let init = (app) => {
         send_message: app.send_message,
         start_edit: app.start_edit,
         stop_edit: app.stop_edit,
+        select_file: app.select_file,
+        upload_file: app.upload_file,
     };
 
     // This creates the Vue instance.
@@ -250,6 +294,13 @@ let init = (app) => {
             app.vue.events = events;
             app.vue.user_email = response.data.user_email;
             app.vue.attending = response.data.attending;
+
+
+
+            app.img_url = response.data.img_url;
+            app.upload_file = response.data.upload_file;
+
+            
 
             let conversations = response.data.conversations;
             app.enumerate(conversations);

@@ -125,6 +125,46 @@
                             <input type="date" v-model="new_event_date" placeholder="What date will the Event happen?"/>
                             <input type="time" v-model="new_event_time" placeholder="When during the day will it be?"/>
                         </div>
+
+                        <div class="control">
+                            insert picture here
+
+                            <div class="section" id="vue-target" v-cloak>
+                                <div v-if="!selection_done" class="field has-addons block">
+                                  <p class="control">
+                                    <div class="file is-info">
+                                      <label class="file-label">
+                                        <input class="file-input" type="file"
+                                               accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*"
+                                               @change="select_file($event)">
+                                        <span class="file-cta">
+                                          <span class="file-label">
+                                            <span>Choose file</span>
+                                          </span>
+                                        </span>
+                                      </label>
+                                    </div>
+                                  </p>
+                                </div>
+                                <template v-if="selection_done && !uploaded">
+                                  <div class="block">
+                                    <img width="400" :src="img_url" />
+                                  </div>
+                                  <div class="block">
+                                    <button class="button is-success" :disabled="uploading" @click="upload_file">
+                                      <span class="icon is-small">
+                                        <i v-if="!uploading" class="fa fa-upload"></i>
+                                        <i v-if="uploading" class="fa fa-spinner fa-pulse fa-fw"></i>
+                                      </span>
+                                      <span>Upload</span>
+                                    </button>
+                                  </div>
+                                </template>
+                                <div v-if="uploaded">
+                                  <i class="fa fa-check"></i> Uploaded!
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <div class="field">
                         <div class="control">
@@ -282,6 +322,7 @@
   let load_conversations_url = "[[=XML(load_conversations_url)]]";
   let start_conversation_url = "[[=XML(start_conversation_url)]]";
   let my_callback_url = "[[=XML(my_callback_url)]]";
+  let file_upload_url = "[[=XML(file_upload_url)]]";
 </script>
 <script src="js/index.js"></script>
 [[end]]
