@@ -132,7 +132,7 @@ let init = (app) => {
     app.load_conversation = function (convo_idx) {
         let convo = app.vue.conversations[convo_idx];
         app.vue.open_conversation = convo;
-        axios.get(load_messages_url, {params: {conversation_id: convo.id}}).then(function (response) {
+        axios.get(load_messages_url, {params: {conversation_id: app.vue.open_conversation.id}}).then(function (response) {
             app.vue.messages = response.data.messages;
         });
         const id = setInterval(load_messages, 5000);
@@ -144,7 +144,7 @@ let init = (app) => {
             }
             else {
                 console.log("Sending HTTP GET to retrieve messages");
-                axios.get(load_messages_url, {params: {conversation_id: convo.id}}).then(function (response) {
+                axios.get(load_messages_url, {params: {conversation_id: app.vue.open_conversation.id}}).then(function (response) {
                     app.vue.messages = response.data.messages;
                 });
             }
