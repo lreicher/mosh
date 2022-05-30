@@ -26,6 +26,7 @@ Warning: Fixtures MUST be declared with @action.uses({fixtures}) else your app w
 """
 import datetime
 import collections as ct
+import time
 
 from py4web import action, request, abort, redirect, URL, response
 from yatl.helpers import A
@@ -65,16 +66,11 @@ def load_feed():
         (db.attendees.user_id == auth.user_id) &
         (db.event.id == db.attendees.event_id)
     ).select(db.attendees.event_id).as_list()
-
-
     conversations = db(
         ((db.conversation.host_id == get_user()) | (db.conversation.user_id == get_user()))
     ).select().as_list()
     #print("CONVOS: ", conversations)
-
-
     return dict(events=events, attending=attending, user_email=user_email, conversations=conversations)
-
 
 @action('myevents')
 @action.uses('myevents.html', url_signer, db, auth.user)
@@ -101,23 +97,15 @@ def add():
     event = db.event[id]
     return dict(event=event)
 
-# This endpoint will be used for URLs of the form /edit/k where k is the event id.
-@action('edit/<event_id:int>', method=["GET", "POST"])
-@action.uses('edit.html', db, session, auth.user)
-def edit(event_id=None):
-    assert event_id is not None
-    # We read the product being edited from the db.
-    # p = db(db.product.id == product_id).select().first()
-    event = db.event[event_id]
-    if event is None or not (event.created_by == get_user_email()):
-        # Nothing found to be edited!
-        redirect(URL('index'))
-    # Edit form: it has record=
-    form = Form(db.event, record=event, deletable=False, csrf_session=session, formstyle=FormStyleBulma)
-    if form.accepted:
-        # The update already happened!
-        redirect(URL('index'))
-    return dict(form=form)
+@action('edit', method="POST")
+@action.uses(url_signer.verify(), db, session, auth.user)
+def edit():
+    id = request.json.get('id')
+    field = request.json.get('field')
+    value = request.json.get('value')
+    db(db.event.id == id).update(**{field: value})
+    time.sleep(1)
+    return "ok"
 
 @action('delete')
 @action.uses(db, session, auth.user, url_signer.verify())
@@ -156,12 +144,10 @@ def attend():
     )
     return "ok"
 
-
 @action('start_conversation', method="POST")
 @action.uses(db, session, auth.user, url_signer.verify())
 def start_conversation():
     event_id = request.json.get('event_id')
-    
     user = get_user()
     e = db.event[event_id]
     assert e is not None
@@ -174,7 +160,6 @@ def start_conversation():
     # get row for user
     ur = db(db.auth_user.id == user).select().first()
     user_name = ur.first_name + " " + ur.last_name if ur is not None else "Unknown"
-    
     conversation_id = db.conversation.insert(
         event_id=event_id,
         host_id=host.id,
@@ -185,7 +170,6 @@ def start_conversation():
     )
     conversation = db.conversation[conversation_id]
     return dict(conversation=conversation)
-
 
 @action('message', method="POST")
 @action.uses(db, session, auth.user, url_signer.verify())
@@ -200,7 +184,6 @@ def message():
     new_message = db.message[message_id]
     return dict(message=new_message)
 
-
 @action('load_conversations', method="GET")
 @action.uses(db, session, auth.user, url_signer.verify())
 def load_conversations():
@@ -209,7 +192,6 @@ def load_conversations():
     ).select().as_list()
     #print("CONVOS: ", conversations)
     return dict(conversations=conversations)
-
 
 @action('load_messages', method="GET")
 @action.uses(db, session, auth.user, url_signer.verify())
@@ -227,16 +209,3 @@ def download1():
 def download2():
     pic = db(db.images).select().first().picture   #select first picture
     return dict(pic=pic)
-
-# def display_form():
-#     record = db.event(request.args(0))
-#     form = SQLFORM(db.event, record, deletable=True,
-#                     upload=URL('download'))
-#     if form.process().accepted:
-#         response.flash = 'form accepted'
-#     elif form.errors:
-#         response.flash = 'form has errors'
-#     return dict(form=form)
-
-# def download():
-#     reponse.download(request, db)

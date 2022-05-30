@@ -43,6 +43,19 @@ let init = (app) => {
         return a;
     };
 
+    app.decorate = (a) => {
+        a.map((e) => {
+            e._state = {event_host: "clean", event_name: "clean",
+                event_location: "clean", event_description: "clean", 
+                event_price: "clean", event_date: "clean",
+                event_time: "clean"}; });
+            e._server_vals = {event_host: e.event_host, event_name: e.event_name,
+                event_location: e.event_location, description: e.levent_ocation, 
+                event_price: e.event_price, date: e.event_date,
+                event_time: e.event_time};
+        return a;
+    };
+
     app.complete = (events) => {
         events.map((event) => {
             event.attending = false;
@@ -59,20 +72,35 @@ let init = (app) => {
                 event_price: app.vue.new_event_price,
                 event_date: app.vue.new_event_date,
                 event_time: app.vue.new_event_time,
+                _state: {event_host: "clean", event_name: "clean",
+                        event_location: "clean", event_description: "clean", 
+                        event_price: "clean", event_date: "clean",
+                        event_time: "clean"},
             }).then(function (response) {
-                app.vue.events.unshift({
-                    id: response.data.event.id,
-                    host: response.data.event.host,
-                    event_name: response.data.event.event_name,
-                    location: response.data.event.location,
-                    description: response.data.event.description,
-                    price: response.data.event.price,
-                    date: response.data.event.date,
-                    time: response.data.event.time,
+                app.vue.events.push({
+                    host: app.vue.new_event_host,
+                    event_name: app.vue.new_event_name,
+                    location: app.vue.new_event_location,
+                    description: app.vue.new_event_description,
+                    price: app.vue.new_event_price,
+                    date: app.vue.new_event_date,
+                    time: app.vue.new_event_time,
                     when: response.data.event.when,
                     created_by: response.data.event.created_by,
                     creation_date: response.data.event.creation_date,
                     attending: false,
+                    _state: {host: "clean", event_name: "clean",
+                        location: "clean", description: "clean", 
+                        price: "clean", date: "clean",
+                        time: "clean"},
+                    _server_vals: {host: app.vue.new_event_host,
+                        event_name: app.vue.new_event_name,
+                        location: app.vue.new_event_location,
+                        description: app.vue.new_event_description,
+                        price: app.vue.new_event_price,
+                        date: app.vue.new_event_date,
+                        time: app.vue.new_event_time,
+                    }
                 });
                 app.enumerate(app.vue.events);
                 app.reset_event_form();
@@ -105,6 +133,27 @@ let init = (app) => {
 
     app.set_add_status = function (new_status) {
         app.vue.add_status = new_status;
+    };
+
+    app.start_edit = function (event_idx, fn) {
+        app.vue.events[event_idx]._state[fn] = "edit";
+    };
+
+    app.stop_edit = function (event_idx, fn) {
+        let event = app.vue.events[event_idx];
+        if (event._state[fn] === 'edit') {
+            if (event._server_vals[fn] !== event[fn]) {
+                event._state[fn] = "pending";
+                axios.post(edit_event_url, {
+                    id: event.id, field: fn, value: event[fn]
+                }).then(function (result) {
+                    event._state[fn] = "clean";
+                    event._server_vals[fn] = event[fn];
+                })
+            } else {
+                event._state[fn] = "clean";
+            }
+        }
     };
 
     app.set_view_myevents_status = function (new_status) {
@@ -179,6 +228,8 @@ let init = (app) => {
         load_conversation: app.load_conversation,
         close_conversation: app.close_conversation,
         send_message: app.send_message,
+        start_edit: app.start_edit,
+        stop_edit: app.stop_edit,
     };
 
     // This creates the Vue instance.
@@ -193,6 +244,8 @@ let init = (app) => {
         axios.get(load_feed_url).then(function (response) {
             let events = response.data.events;
             app.enumerate(events);
+            // app.vue.events = app.decorate(app.enumerate(events));
+
             app.complete(events);
             app.vue.events = events;
             app.vue.user_email = response.data.user_email;
