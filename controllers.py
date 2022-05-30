@@ -55,6 +55,7 @@ def index():
         load_conversations_url=URL('load_conversations', signer=url_signer),
         start_conversation_url=URL('start_conversation', signer=url_signer),
         my_callback_url = URL('my_callback', signer=url_signer),
+        file_upload_url = URL('file_upload', signer=url_signer),
     )
 
 @action('load_feed')
@@ -206,9 +207,20 @@ def load_messages():
     ).select(orderby=db.message.date).as_list()
     return dict(messages=messages)
 
-def download1():
-    return response.download(request, db)
+# def download1():
+#     return response.download(request, db)
 
-def download2():
-    pic = db(db.images).select().first().picture   #select first picture
-    return dict(pic=pic)
+# def download2():
+#     pic = db(db.images).select().first().picture   #select first picture
+#     return dict(pic=pic)
+
+@action('file_upload', method="PUT")
+@action.uses() # Add here things you might want to use.
+def file_upload():
+    file_name = request.params.get("file_name")
+    file_type = request.params.get("file_type")
+    uploaded_file = request.body # This is a file, you can read it.
+    # Diagnostics
+    print("Uploaded", file_name, "of type", file_type)
+    print("Content:", uploaded_file.read())
+    return "ok"
