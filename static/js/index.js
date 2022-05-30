@@ -37,7 +37,9 @@ let init = (app) => {
                 highlight: true,
                 dates: new Date(),
             },
-        ]
+        ],
+        // Calendar List
+        vclist: [],
         // Complete as you see fit.
     };
 
@@ -172,6 +174,12 @@ let init = (app) => {
     app.toggle_attending = function (event_idx) {
         let event = app.vue.events[event_idx];
         event.attending = !event.attending;
+        if(event.attending){
+            app.calendar_add_event(event.date,event.id);
+        }
+        else{
+            app.calendar_delet_event(event.id);
+        }
         axios.post(set_attending_url, {event_id: event.id, status: event.attending});
     };
 
@@ -261,7 +269,47 @@ let init = (app) => {
             req.send(app.file);
         }
     };
+    // Calendar Functions
+    app.calendar_add_event = function(date,id) {
+        //console.log(String(date));
+        let list_date = String(date).split("-");
+        let year = Number(list_date[0]);
+        //console.log(year);
+        let month = Number(list_date[1]) - 1;
+        //console.log(month);
+        let day = Number(list_date[2]);
+        //console.log(day);
 
+        // add vue
+        app.data.attributes.push(
+            {
+                dot: true,   
+                dates: new Date(year, month , day)
+            }
+        );
+        for(let i = 0; i < app.data.attributes.length; i++){
+            console.log(app.data.attributes[i]);
+        }
+        app.data.vclist.push(id);
+        for(let i = 0; i < app.data.vclist.length; i++){
+            console.log(app.data.vclist[i]);
+        }
+        return app.data.attributes
+    };
+    app.calendar_delet_event = function(id) {
+        console.log(app.data.vclist.indexOf(id));
+        let index_delet_event = app.data.vclist.indexOf(id)
+        delete app.vue.attributes[(index_delet_event + 1)];
+        delete app.vue.vclist[(index_delet_event)];
+        for(let i = 0; i < app.data.attributes.length; i++){
+            console.log(app.data.attributes[i]);
+        }
+        app.data.vclist.push(id);
+        for(let i = 0; i < app.data.vclist.length; i++){
+            console.log(app.data.vclist[i]);
+        }
+        return 
+    };
     // This contains all the methods.
     app.methods = {
         delete_event: app.delete_event,
@@ -278,6 +326,8 @@ let init = (app) => {
         stop_edit: app.stop_edit,
         select_file: app.select_file,
         upload_file: app.upload_file,
+        calendar_add_event: app.calendar_add_event,
+        calendar_delet_event: app.calendar_delet_event,
     };
 
     // This creates the Vue instance.
@@ -315,6 +365,7 @@ let init = (app) => {
                 for (let attend of app.vue.attending) {
                     if (event.id === attend.event_id && attend.attending === true) {
                         event.attending = true;
+                        app.vue.calendar_add_event(event.date,event.id);
                         break;
                     }
                 }
