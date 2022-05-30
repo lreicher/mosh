@@ -50,14 +50,15 @@ let init = (app) => {
 
     app.decorate = (a) => {
         a.map((e) => {
-            e._state = {event_host: "clean", event_name: "clean",
-                event_location: "clean", event_description: "clean", 
-                event_price: "clean", event_date: "clean",
-                event_time: "clean"}; });
-            e._server_vals = {event_host: e.event_host, event_name: e.event_name,
-                event_location: e.event_location, description: e.levent_ocation, 
-                event_price: e.event_price, date: e.event_date,
-                event_time: e.event_time};
+            e._state = {host: "clean", event_name: "clean",
+                location: "clean", description: "clean",
+                price: "clean", date: "clean",
+                time: "clean"};
+            e._server_vals = {host: e.host, event_name: e.event_name,
+                location: e.location, description: e.description,
+                price: e.price, date: e.date,
+                time: e.time};
+        });
         return a;
     };
 
@@ -77,10 +78,10 @@ let init = (app) => {
                 event_price: app.vue.new_event_price,
                 event_date: app.vue.new_event_date,
                 event_time: app.vue.new_event_time,
-                _state: {event_host: "clean", event_name: "clean",
-                        event_location: "clean", event_description: "clean", 
-                        event_price: "clean", event_date: "clean",
-                        event_time: "clean"},
+                _state: {host: "clean", event_name: "clean",
+                        location: "clean", description: "clean",
+                        price: "clean", date: "clean",
+                        time: "clean"},
             }).then(function (response) {
                 app.vue.events.push({
                     host: app.vue.new_event_host,
@@ -94,11 +95,14 @@ let init = (app) => {
                     created_by: response.data.event.created_by,
                     creation_date: response.data.event.creation_date,
                     attending: false,
-                    _state: {host: "clean", event_name: "clean",
+                    _state: {
+                        host: "clean", event_name: "clean",
                         location: "clean", description: "clean", 
                         price: "clean", date: "clean",
-                        time: "clean"},
-                    _server_vals: {host: app.vue.new_event_host,
+                        time: "clean"
+                    },
+                    _server_vals: {
+                        host: app.vue.new_event_host,
                         event_name: app.vue.new_event_name,
                         location: app.vue.new_event_location,
                         description: app.vue.new_event_description,
@@ -289,7 +293,7 @@ let init = (app) => {
             let events = response.data.events;
             app.enumerate(events);
             // app.vue.events = app.decorate(app.enumerate(events));
-
+            app.decorate(events);
             app.complete(events);
             app.vue.events = events;
             app.vue.user_email = response.data.user_email;
@@ -316,13 +320,6 @@ let init = (app) => {
                 }
             }
         });
-        // axios.get(load_conversations_url).then(function (response) {
-        //     console.log(response)
-        //     let conversations = response.data.conversations;
-        //     app.enumerate(conversations);
-        //     app.vue.conversations = conversations;
-        //     
-        // });
     };
 
     // Call to the initializer.

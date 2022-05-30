@@ -30,7 +30,8 @@
                         <th>Location</th>
                         <th>Description</th>
                         <th>Price</th>
-                        <th>When</th>
+                        <th>Date</th>
+                        <th>Time</th>
                         <th>Creation Date</th>
                         <th></th>
                         <th></th>
@@ -38,15 +39,8 @@
                     </tr>
                     <template v-for="e in events">
                         <tr v-if="e.created_by === user_email">
-                            <!-- <td>{{e.host}}</td>
-                            <td>{{e.event_name}}</td>
-                            <td>{{e.location}}</td>
-                            <td>{{e.description}}</td>
-                            <td>{{e.price}}</td>
-                            <td>{{e.when}}</td>
-                            <td> -->
                             <td v-for="fn in ['host', 'event_name', 'location', 'description', 
-                            'price', 'when']">
+                            'price', 'date', 'time']">
                                 <div class="control" :class="{'is-loading': e._state[fn] === 'pending'}">
                                     <input type="text" class="input" v-model="e[fn]"
                                             :class="{'is-focused': e._state[fn] === 'edit',
