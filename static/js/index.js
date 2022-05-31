@@ -175,7 +175,7 @@ let init = (app) => {
         let event = app.vue.events[event_idx];
         event.attending = !event.attending;
         if(event.attending){
-            app.calendar_add_event(event.date,event.id);
+            app.calendar_add_event(event.date,event.id,event.event_name);
         }
         else{
             app.calendar_delet_event(event.id);
@@ -270,7 +270,7 @@ let init = (app) => {
         }
     };
     // Calendar Functions
-    app.calendar_add_event = function(date,id) {
+    app.calendar_add_event = function(date,id,name) {
         //console.log(String(date));
         let list_date = String(date).split("-");
         let year = Number(list_date[0]);
@@ -284,7 +284,11 @@ let init = (app) => {
         app.data.attributes.push(
             {
                 dot: true,   
-                dates: new Date(year, month , day)
+                dates: new Date(year, month , day),
+                popover: {
+                    label: String(name),
+                    visibility: 'click',
+                },
             }
         );
         for(let i = 0; i < app.data.attributes.length; i++){
@@ -365,7 +369,7 @@ let init = (app) => {
                 for (let attend of app.vue.attending) {
                     if (event.id === attend.event_id && attend.attending === true) {
                         event.attending = true;
-                        app.vue.calendar_add_event(event.date,event.id);
+                        app.vue.calendar_add_event(event.date,event.id,event.event_name);
                         break;
                     }
                 }
