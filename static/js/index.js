@@ -86,6 +86,7 @@ let init = (app) => {
                         time: "clean"},
             }).then(function (response) {
                 app.vue.events.push({
+                    id: response.data.event.id,
                     host: app.vue.new_event_host,
                     event_name: app.vue.new_event_name,
                     location: app.vue.new_event_location,
@@ -120,8 +121,8 @@ let init = (app) => {
     };
 
     app.delete_event = function(event_idx) {
-        let id = app.vue.events[event_idx].id
-        axios.get(delete_event_url, {params: {id: id}}).then(function (response) {
+        let id = app.vue.events[event_idx].id;
+        axios.post(delete_event_url, {id: id}).then(function (response) {
             for (let i = 0; i < app.vue.events.length; i++) {
                 if (app.vue.events[i].id === id) {
                     app.vue.events.splice(i, 1);
@@ -174,13 +175,13 @@ let init = (app) => {
     app.toggle_attending = function (event_idx) {
         let event = app.vue.events[event_idx];
         event.attending = !event.attending;
+        axios.post(set_attending_url, {event_id: event.id, status: event.attending});
         if(event.attending){
             app.calendar_add_event(event.date,event.id,event.event_name);
         }
         else{
             app.calendar_delet_event(event.id);
         }
-        axios.post(set_attending_url, {event_id: event.id, status: event.attending});
     };
 
     app.start_conversation = function (event_idx) {

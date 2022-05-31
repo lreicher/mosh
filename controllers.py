@@ -108,10 +108,10 @@ def edit():
     time.sleep(1)
     return "ok"
 
-@action('delete')
+@action('delete', method="POST")
 @action.uses(db, session, auth.user, url_signer.verify())
 def delete():
-    event_id = request.params.get('id')
+    event_id = request.json.get('id')
     assert event_id is not None
     event = db.event[event_id]
     assert event.created_by == get_user_email()
@@ -134,10 +134,10 @@ def attendees(event_id=None):
 @action('attend', method="POST")
 @action.uses(url_signer.verify(), db, session, auth.user)
 def attend():
-    print("Toggling Attend")
+    #print("Toggling Attend")
     event_id = request.json.get('event_id')
     status = request.json.get('status')
-    print("Event_id", event_id, "Status", status)
+    #print("Event_id", event_id, "Status", status)
     assert event_id is not None and status is not None
     db.attendees.update_or_insert(
         ((db.attendees.event_id == event_id) & (db.attendees.user_id == get_user())),
@@ -145,7 +145,7 @@ def attend():
         user_id=get_user(),
         attending=status,
     )
-    print("Updated or inserteed")
+    #print("Updated or inserted")
     return "ok"
 
 @action('start_conversation', method="POST")
