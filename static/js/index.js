@@ -175,7 +175,7 @@ let init = (app) => {
         let event = app.vue.events[event_idx];
         event.attending = !event.attending;
         if(event.attending){
-            app.calendar_add_event(event.date,event.id,event.event_name);
+            app.calendar_add_event(event);
         }
         else{
             app.calendar_delet_event(event.id);
@@ -270,35 +270,49 @@ let init = (app) => {
         }
     };
     // Calendar Functions
-    app.calendar_add_event = function(date,id,name) {
+    app.calendar_add_event = function(event) {
+        let colors = Array('gray', 'red', 'orange', 'yellow', 'green', 'teal', 'blue', 'indigo', 'purple', 'pink');
+        let color = colors[Math.floor(Math.random()*colors.length)];
         //console.log(String(date));
-        let list_date = String(date).split("-");
+        let list_date = String(event.date).split("-");
         let year = Number(list_date[0]);
         //console.log(year);
         let month = Number(list_date[1]) - 1;
         //console.log(month);
         let day = Number(list_date[2]);
         //console.log(day);
-
+        
+        let list_time = String(event.time).split(":");
+        let hour = Number(list_time[0]);
+        let ampm = 'AM';
+        if (hour > 12 ){
+            hour = hour - 12;
+            ampm = 'PM'
+        }
+        console.log(Number(list_time[0]));
+        console.log(Number(list_time[1]));
         // add vue
         app.data.attributes.push(
             {
-                dot: true,   
+                bar: color,   
                 dates: new Date(year, month , day),
                 popover: {
-                    label: String(name),
-                    visibility: 'click',
+                    label: "Event name: "+String(event.event_name)+'\n'+
+                           "Time: "+String(hour)+":"+String(Number(list_time[1]))+String(ampm),
+                    isInteractive: true,
+                    transition: 'fade',
+                    visibility: 'hover',
                 },
             }
         );
+        app.data.vclist.push(event.id);
         for(let i = 0; i < app.data.attributes.length; i++){
             console.log(app.data.attributes[i]);
         }
-        app.data.vclist.push(id);
         for(let i = 0; i < app.data.vclist.length; i++){
             console.log(app.data.vclist[i]);
         }
-        return app.data.attributes
+        return 
     };
     app.calendar_delet_event = function(id) {
         console.log(app.data.vclist.indexOf(id));
@@ -308,7 +322,6 @@ let init = (app) => {
         for(let i = 0; i < app.data.attributes.length; i++){
             console.log(app.data.attributes[i]);
         }
-        app.data.vclist.push(id);
         for(let i = 0; i < app.data.vclist.length; i++){
             console.log(app.data.vclist[i]);
         }
@@ -369,7 +382,7 @@ let init = (app) => {
                 for (let attend of app.vue.attending) {
                     if (event.id === attend.event_id && attend.attending === true) {
                         event.attending = true;
-                        app.vue.calendar_add_event(event.date,event.id,event.event_name);
+                        app.vue.calendar_add_event(event);
                         break;
                     }
                 }
