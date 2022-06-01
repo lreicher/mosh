@@ -114,12 +114,13 @@
                     <div class="field">
                         <label class="label">Who's Hosting?</label>
                         <div class="control">
-                            <input class = "input" v-model="new_event_host" placeholder="Who's Hosting?"/>
+                            <input class = "input" v-model="new_event_host" placeholder="Ex. Sammy Sluggerson III"/>
                         </div>
                     </div>
                     <div class="field">
                         <label class="label">Event Name<label>
                         <div class="control">
+<<<<<<< HEAD
                             Insert Pictures of the Event:
                             
                             <div v-for="e in events">
@@ -141,6 +142,119 @@
                                 </div>
                                 
                                 <img v-if="e.image" width="50" :src="e.image" />
+=======
+                            <input class = "input" v-model="new_event_name" placeholder="Ex. Sammy's Birthday Party"/>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label class="label">Event Location<label>
+                        <div class="control">
+                            <input class = "input" v-model="new_event_location" placeholder="Ex. Painted Barrels"/>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label class="label">Event Description<label>
+                        <div class="control">
+                            <textarea class = "textarea" v-model="new_event_description" placeholder="Ex. Come party with Sammy and friends for an awesome night of forest partying. Dress in bright colors and get ready to dance. Music and facepainting will be provided, BYOB!"></textarea>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label class="label">Event Price<label>
+                        <div class="control">
+                            <input class = "input" type="number" v-model="new_event_price"/>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label class="label">Event Date<label>
+                        <div class="control">
+                            <input class = "input" type="date" onfocus="this.min=new Date().toISOString().split('T')[0]" v-model="new_event_date"/>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label class="label">Event Time<label>
+                        <div class="control">
+                            <input class = "input" type="time" v-model="new_event_time"/>     
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label class="label">Time Guidelines<label>
+                        <div class="control">
+                            <div class = "select"> <!-- NEED TO ADD THIS TO MODELS AND CONTROLLERS AND INDEX.js-->
+                                <select v-model="new_event_time_guidelines">
+                                    <option>Plan to arrive early</option>
+                                    <option>Plan to arrive on time</option>
+                                    <option>Get there whenever</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <label class="label">Substances:</label>
+                    <div class="columns">
+                        
+                        <div class="column">
+                            <div class="field">
+                                
+                                <label class="label">Alcohol<label>
+                                <div class="control">
+                                    <div class = "select"> <!-- NEED TO ADD THIS TO MODELS AND CONTROLLERS AND INDEX.js-->
+                                        <select v-model="new_event_alcohol">
+                                            <option>Provided</option>
+                                            <option>Welcome/Permitted</option>
+                                            <option>Not Permitted</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div> 
+                        <div class="column">
+                            <div class="field">
+                            <label class="label">Marijuana<label>
+                                <div class="control">
+                                    <div class = "select"> <!-- NEED TO ADD THIS TO MODELS AND CONTROLLERS AND INDEX.js-->
+                                        <select v-model="new_event_marijuana">
+                                            <option>Provided</option>
+                                            <option>Welcome/Permitted</option>
+                                            <option>Not Permitted</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                
+                   
+                    <!--Event picture upload-->
+                    <div class="control">
+                        Insert Pictures of the Event:
+                        <div v-if="!selection_done" class="field has-addons block">
+                            <p class="control">
+                            <div class="file is-info">
+                                <label class="file-label">
+                                <input class="file-input" type="file"
+                                        accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*"
+                                        @change="select_file($event)">
+                                <span class="file-cta">
+                                    <span class="file-label">
+                                    <span>Choose file</span>
+                                    </span>
+                                </span>
+                                </label>
+                            </div>
+                            </p>
+                        </div>
+                        <template v-if="selection_done && !uploaded">
+                            <div class="block">
+                            <img width="400" :src="img_url" />
+                            </div>
+                            <div class="block">
+                            <button class="button is-success" :disabled="uploading" @click="upload_file">
+                                <span class="icon is-small">
+                                <i v-if="!uploading" class="fa fa-upload"></i>
+                                <i v-if="uploading" class="fa fa-spinner fa-pulse fa-fw"></i>
+                                </span>
+                                <span>Upload</span>
+                            </button>
+>>>>>>> refs/remotes/origin/master
                             </div>
 
                             
@@ -155,8 +269,6 @@
                         </div>
                     </div>
             </div>
-           
-
 
             <div v-else>
                 <h2 class="subtitle">New Events</h2>
@@ -173,30 +285,46 @@
                     <div class="card-content">
                         <div class="content">
                             <div class="columns">
-                                <div class="column">
+                                <div class="column is-one-half">
+                                    
                                     <span class="icon">
                                       <i class="fa fa-map-marker" aria-hidden="true"></i>
                                     </span>
-                                    {{e.location}}
-                                </div>
-                                <div class="column">
+                                    <h6>{{e.location}}</h6>
                                     {{e.when}}
+                                    <br>
+
+                                    {{e.guidelines}}
                                 </div>
-                                <div class="column">
-                                    <span class="icon">
-                                      <i class="fa fa-glass" aria-hidden="true"></i>
+        
+                                <div class="column is-one-quarter">
+                                    <h6>Substances:</h6>
+                                    
+                                        
+                                    <span class="icon is-relative">
+                                    <i class="fa fa-glass" aria-hidden="true"></i>
                                     </span>
-                                    Substances
+                                    <p>({{e.alcohol}}) </p>
+                                
+                                    <span class="icon is-relative">
+                                        <i class ="fa fa-leaf" aria-hidden="true"></i>
+                                    </span>
+                                    <p>({{e.marijuana}}) </p>
+                                        
+                                    
                                 </div>
-                                <div class="column">
-                                    <div v-if="e.price === 0">
-                                      Free
-                                    </div>
-                                    <div v-else>
-                                      ${{e.price}}
-                                    </div>
-                                    <span class="icon">
-                                      <i class="fa fa-ticket" aria-hidden="true"></i>
+                                <div class="column is-one-quarter">
+                                    <span class="span is-pulled-right">
+                                        <h6>Price: </h6>
+                                        <span class="icon">
+                                            <i class="fa fa-ticket" aria-hidden="true"></i>
+                                        </span>
+                                        <div v-if="e.price === 0">
+                                        Free
+                                        </div>
+                                        <div v-else>
+                                        ${{e.price}}
+                                        </div>
                                     </span>
                                 </div>
                             </div>
