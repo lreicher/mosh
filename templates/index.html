@@ -58,7 +58,7 @@
                                 <button @click="delete_event(e._idx)" class="button is-danger">
                                     <i class="fa fa-pencil fa-fw"></i>Delete Event
                                 </button>
-                                <button class="button is-primary">
+                                <button @click="load_attendees(e._idx)" class="button is-primary">
                                     <i class="fa fa-users fa-fw"></i>View Attendees
                                 </button>
                             </td>

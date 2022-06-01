@@ -48,7 +48,7 @@ def index():
         add_event_url=URL('add', signer=url_signer),
         edit_event_url=URL('edit', signer=url_signer),
         delete_event_url=URL('delete', signer=url_signer),
-        load_attendees_url=URL('attendees', signer=url_signer),
+        load_attendees_url=URL('load_attendees', signer=url_signer),
         set_attending_url=URL('attend', signer=url_signer),
         send_message_url=URL('message', signer=url_signer),
         load_messages_url=URL('load_messages', signer=url_signer),
@@ -119,18 +119,19 @@ def delete():
     db(db.event.id == event_id).delete()
     return "ok"
 
-@action('attendees/<event_id:int>')
-@action.uses('attendees.html', db, session, auth.user)
-def attendees(event_id=None):
+@action('load_attendees')
+@action.uses(url_signer.verify(), db, session, auth.user)
+def load_attendees():
+    event_id = request.params.get('event_id')
     assert event_id is not None
     event = db.event[event_id]
     if event is None or not (event.created_by == get_user_email()):
         redirect(URL('index'))
-    rows = db(
+    attendees = db(
         (db.attendees.event_id == event_id) &
         (db.auth_user.id == db.attendees.user_id)
-    ).select(db.auth_user.first_name, db.auth_user.last_name)
-    return dict(rows=rows, event=event)
+    ).select(db.auth_user.first_name, db.auth_user.last_name).as_list()
+    return dict(attendees=attendees)
 
 @action('attend', method="POST")
 @action.uses(url_signer.verify(), db, session, auth.user)

@@ -67,6 +67,7 @@ let init = (app) => {
     app.complete = (events) => {
         events.map((event) => {
             event.attending = false;
+            event.attendees = [];
         });
     };
 
@@ -97,7 +98,6 @@ let init = (app) => {
                     when: response.data.event.when,
                     created_by: response.data.event.created_by,
                     creation_date: response.data.event.creation_date,
-                    attending: false,
                     _state: {
                         host: "clean", event_name: "clean",
                         location: "clean", description: "clean", 
@@ -114,6 +114,7 @@ let init = (app) => {
                         time: app.vue.new_event_time,
                     }
                 });
+                app.complete(app.vue.events);
                 app.enumerate(app.vue.events);
                 app.reset_event_form();
                 app.set_add_status(false);
@@ -183,6 +184,14 @@ let init = (app) => {
             app.calendar_delet_event(event.id);
         }
     };
+
+    app.load_attendees = function (event_idx) {
+        let event = app.vue.events[event_idx];
+        axios.get(load_attendees_url, {params: {event_id: event.id}}).then(function (response) {
+            console.log(response.data.attendees);
+           event.attendees = response.data.attendees;
+        });
+    }
 
     app.start_conversation = function (event_idx) {
         let event = app.vue.events[event_idx];
@@ -347,6 +356,7 @@ let init = (app) => {
         upload_file: app.upload_file,
         calendar_add_event: app.calendar_add_event,
         calendar_delet_event: app.calendar_delet_event,
+        load_attendees: app.load_attendees,
     };
 
     // This creates the Vue instance.
