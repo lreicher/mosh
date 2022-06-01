@@ -36,10 +36,12 @@ db.define_table(
     Field('price', 'float', default=0),
     Field('date', 'date', requires=IS_NOT_EMPTY()),
     Field('time', 'time', requires=IS_NOT_EMPTY()),
-    Field('image', 'upload', uploadfield='picture_file'),
-    Field('picture_file', 'blob'),
+    # Field('image', 'upload', uploadfield='picture_file'),
+    # Field('picture_file', 'blob'),
     Field('created_by', default=get_user_email),
     Field('creation_date', 'datetime', default=get_time),
+
+    Field('image', 'text')
 )
 
 db.event.when = Field.Virtual(lambda row: row.event.date.strftime('%A %m/%d/%Y ') + row.event.time.strftime('@ %I:%M %p'))

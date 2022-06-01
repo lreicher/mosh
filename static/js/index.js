@@ -24,13 +24,9 @@ let init = (app) => {
         new_event_price: 0,
         new_event_date: "",
         new_event_time: "",
+        // new_event_image: "",
         open_conversation: -1,
         add_message: "",
-        selection_done: false,
-        uploading: false,
-        uploaded_file: "",
-        uploaded: false,
-        img_url: "",
         attributes: [ 
             {
                 key: 'today',
@@ -80,6 +76,7 @@ let init = (app) => {
                 event_price: app.vue.new_event_price,
                 event_date: app.vue.new_event_date,
                 event_time: app.vue.new_event_time,
+                // event_image: app.vue.new_event_image,
                 _state: {host: "clean", event_name: "clean",
                         location: "clean", description: "clean",
                         price: "clean", date: "clean",
@@ -95,8 +92,12 @@ let init = (app) => {
                     date: app.vue.new_event_date,
                     time: app.vue.new_event_time,
                     when: response.data.event.when,
+                    // image: app.vue.new_event_image,
                     created_by: response.data.event.created_by,
                     creation_date: response.data.event.creation_date,
+
+                    image:"",
+
                     attending: false,
                     _state: {
                         host: "clean", event_name: "clean",
@@ -112,6 +113,7 @@ let init = (app) => {
                         price: app.vue.new_event_price,
                         date: app.vue.new_event_date,
                         time: app.vue.new_event_time,
+                        // image: app.vue.new_event_image,
                     }
                 });
                 app.enumerate(app.vue.events);
@@ -141,6 +143,7 @@ let init = (app) => {
         app.vue.new_event_price = 0;
         app.vue.new_event_date = "";
         app.vue.new_event_time = "";
+        // app.vue.new_event_image = "";
     };
 
     app.set_add_status = function (new_status) {
@@ -234,43 +237,30 @@ let init = (app) => {
         app.vue.add_message = "";
     };
 
-    app.select_file = function (event) {
-        // Reads the file.
+    app.upload_file = function (event, event_idx) {
         let input = event.target;
-        app.file = input.files[0];
-        if (app.file) {
-            app.vue.selection_done = true;
-            // We read the file.
+        let file = input.files[0];
+        let e = app.vue.events[event_idx];
+
+        if (file) {
             let reader = new FileReader();
-            reader.addEventListener("load", function () {
-                app.vue.img_url = reader.result;
-            });
-            reader.readAsDataURL(app.file);
+            // reader.addEventListener("load", function () {
+                // Sends the image to the server.
+                axios.post(upload_image_url,
+                    {
+                        event_id: e.id,
+                        image: reader.result,
+                    })
+                    .then(function () {
+                        // Sets the local preview.
+                        e.image = reader.result;
+
+                    });
+            // });
+            reader.readAsDataURL(file);
         }
     };
 
-    app.upload_complete = function (file_name, file_type) {
-        app.vue.uploading = false;
-        app.vue.uploaded = true;
-    };
-
-    app.upload_file = function () {
-        if (app.file) {
-            let file_type = app.file.type;
-            let file_name = app.file.name;
-            let full_url = file_upload_url + "&file_name=" + encodeURIComponent(file_name)
-                + "&file_type=" + encodeURIComponent(file_type);
-            // Uploads the file, using the low-level streaming interface. This avoid any
-            // encoding.
-            app.vue.uploading = true;
-            let req = new XMLHttpRequest();
-            req.addEventListener("load", function () {
-                app.upload_complete(file_name, file_type)
-            });
-            req.open("PUT", full_url, true);
-            req.send(app.file);
-        }
-    };
     // Calendar Functions
     app.calendar_add_event = function(event) {
         let colors = Array('gray', 'red', 'orange', 'yellow', 'green', 'teal', 'blue', 'indigo', 'purple', 'pink');
@@ -343,7 +333,6 @@ let init = (app) => {
         send_message: app.send_message,
         start_edit: app.start_edit,
         stop_edit: app.stop_edit,
-        select_file: app.select_file,
         upload_file: app.upload_file,
         calendar_add_event: app.calendar_add_event,
         calendar_delet_event: app.calendar_delet_event,
@@ -367,13 +356,6 @@ let init = (app) => {
             app.vue.events = events;
             app.vue.user_email = response.data.user_email;
             app.vue.attending = response.data.attending;
-
-
-
-            app.img_url = response.data.img_url;
-            app.upload_file = response.data.upload_file;
-
-            
 
             let conversations = response.data.conversations;
             app.enumerate(conversations);
