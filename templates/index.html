@@ -58,7 +58,7 @@
                                 <button @click="delete_event(e._idx)" class="button is-danger">
                                     <i class="fa fa-pencil fa-fw"></i>Delete Event
                                 </button>
-                                <button @click="load_attendees(e._idx)" class="button is-primary">
+                                <button class="button is-primary">
                                     <i class="fa fa-users fa-fw"></i>View Attendees
                                 </button>
                             </td>
@@ -105,20 +105,21 @@
                 </div>
           </div>
         </div>
-        <!-- Center Column (feed or add-event form)-->
         <div class="column is-6 box">
             <div v-if="add_status">
-                
-                <h2 class="title">Let's get some details about your event!</h2>
-                <div class = "field">
+                <div class="form">
+                    <p>Let's get some details about your event.</p>
                     <div class="field">
-                        <label class="label">Who's Hosting?</label>
                         <div class="control">
-                            <input class = "input" v-model="new_event_host" placeholder="Who's Hosting?"/>
+                            <input v-model="new_event_host" placeholder="Who's Hosting?"/>
+                            <input v-model="new_event_name" placeholder="Name of the Event?"/>
+                            <input v-model="new_event_location" placeholder="Where is it?"/>
+                            <textarea v-model="new_event_description" placeholder="Describe the Event."></textarea>
+                            <input type="number" v-model="new_event_price" placeholder="How much does it cost?"/>
+                            <input type="date" onfocus="this.min=new Date().toISOString().split('T')[0]" v-model="new_event_date" placeholder="What date will the Event happen?"/>
+                            <input type="time" v-model="new_event_time" placeholder="When during the day will it be?"/>
                         </div>
-                    </div>
-                    <div class="field">
-                        <label class="label">Event Name<label>
+
                         <div class="control">
                             Insert Pictures of the Event:
                             
@@ -147,17 +148,14 @@
 
                         </div>
                     </div>
-                    </div>
                     <div class="field">
                         <div class="control">
                             <input type="submit" @click="add_event" value="Post" class="button is-primary">
                             <input type="submit" @click="set_add_status(false)" value="Cancel" class="button is-warning">
                         </div>
                     </div>
+                </div>
             </div>
-           
-
-
             <div v-else>
                 <h2 class="subtitle">New Events</h2>
                 <div class="section pt-0 container">
