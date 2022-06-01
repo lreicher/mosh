@@ -24,6 +24,9 @@ let init = (app) => {
         new_event_price: 0,
         new_event_date: "",
         new_event_time: "",
+        new_event_time_guidelines: "",
+        new_event_alcohol: "",
+        new_event_marijuana: "",
         open_conversation: -1,
         add_message: "",
         selection_done: false,
@@ -80,11 +83,15 @@ let init = (app) => {
                 event_price: app.vue.new_event_price,
                 event_date: app.vue.new_event_date,
                 event_time: app.vue.new_event_time,
+                event_time_guidelines: app.vue.new_event_time_guidelines,
+                event_alcohol: app.vue.new_event_alcohol,
+                event_marijuana: app.vue.new_event_marijuana,
                 _state: {host: "clean", event_name: "clean",
                         location: "clean", description: "clean",
                         price: "clean", date: "clean",
                         time: "clean"},
             }).then(function (response) {
+                console.log(response)
                 app.vue.events.push({
                     id: response.data.event.id,
                     host: app.vue.new_event_host,
@@ -95,23 +102,18 @@ let init = (app) => {
                     date: app.vue.new_event_date,
                     time: app.vue.new_event_time,
                     when: response.data.event.when,
+                    guidelines: app.vue.new_event_time_guidelines,
+                    alcohol: app.vue.new_event_alcohol,
+                    marijuana: app.vue.new_event_marijuana,
                     created_by: response.data.event.created_by,
                     creation_date: response.data.event.creation_date,
-<<<<<<< HEAD
-<<<<<<< HEAD
-
-                    image:"",
-
-=======
->>>>>>> parent of 08498dc (removed merge conflicts)
-=======
->>>>>>> parent of dc95f99 (image uploads on form but not saved in db)
                     attending: false,
                     _state: {
                         host: "clean", event_name: "clean",
                         location: "clean", description: "clean", 
                         price: "clean", date: "clean",
-                        time: "clean"
+                        time: "clean", guidelines: "clean", alcohol: "clean",
+                        marijuana: "clean"
                     },
                     _server_vals: {
                         host: app.vue.new_event_host,
@@ -121,12 +123,12 @@ let init = (app) => {
                         price: app.vue.new_event_price,
                         date: app.vue.new_event_date,
                         time: app.vue.new_event_time,
+                        guidelines: app.vue.new_event_time_guidelines,
+                        alcohol: app.vue.new_event_alcohol,
+                        marijuana: app.vue.new_event_marijuana,
                     }
                 });
-<<<<<<< HEAD
-=======
                 
->>>>>>> parent of 08498dc (removed merge conflicts)
                 app.enumerate(app.vue.events);
                 app.reset_event_form();
                 app.set_add_status(false);
@@ -381,12 +383,8 @@ let init = (app) => {
             app.vue.user_email = response.data.user_email;
             app.vue.attending = response.data.attending;
 
-
-
             app.img_url = response.data.img_url;
             app.upload_file = response.data.upload_file;
-
-            
 
             let conversations = response.data.conversations;
             app.enumerate(conversations);
