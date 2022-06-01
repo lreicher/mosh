@@ -95,9 +95,12 @@ let init = (app) => {
                     // image: app.vue.new_event_image,
                     created_by: response.data.event.created_by,
                     creation_date: response.data.event.creation_date,
+<<<<<<< HEAD
 
                     image:"",
 
+=======
+>>>>>>> parent of 08498dc (removed merge conflicts)
                     attending: false,
                     _state: {
                         host: "clean", event_name: "clean",
@@ -116,6 +119,10 @@ let init = (app) => {
                         // image: app.vue.new_event_image,
                     }
                 });
+<<<<<<< HEAD
+=======
+                
+>>>>>>> parent of 08498dc (removed merge conflicts)
                 app.enumerate(app.vue.events);
                 app.reset_event_form();
                 app.set_add_status(false);
