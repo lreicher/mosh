@@ -105,57 +105,90 @@
                 </div>
           </div>
         </div>
+        <!-- Center Column (feed or add-event form)-->
         <div class="column is-6 box">
             <div v-if="add_status">
-                <div class="form">
-                    <p>Let's get some details about your event.</p>
+                
+                <h2 class="title">Let's get some details about your event!</h2>
+                <div class = "field">
                     <div class="field">
+                        <label class="label">Who's Hosting?</label>
                         <div class="control">
-                            <input v-model="new_event_host" placeholder="Who's Hosting?"/>
-                            <input v-model="new_event_name" placeholder="Name of the Event?"/>
-                            <input v-model="new_event_location" placeholder="Where is it?"/>
-                            <textarea v-model="new_event_description" placeholder="Describe the Event."></textarea>
-                            <input type="number" v-model="new_event_price" placeholder="How much does it cost?"/>
-                            <input type="date" onfocus="this.min=new Date().toISOString().split('T')[0]" v-model="new_event_date" placeholder="What date will the Event happen?"/>
-                            <input type="time" v-model="new_event_time" placeholder="When during the day will it be?"/>
+                            <input class = "input" v-model="new_event_host" placeholder="Who's Hosting?"/>
                         </div>
-
+                    </div>
+                    <div class="field">
+                        <label class="label">Event Name<label>
                         <div class="control">
-                            Insert Pictures of the Event:
-                            <div v-if="!selection_done" class="field has-addons block">
-                              <p class="control">
-                                <div class="file is-info">
-                                  <label class="file-label">
-                                    <input class="file-input" type="file"
-                                           accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*"
-                                           @change="select_file($event)">
-                                    <span class="file-cta">
-                                      <span class="file-label">
-                                        <span>Choose file</span>
-                                      </span>
+                            <input class = "input" v-model="new_event_name" placeholder="Name of the Event?"/>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label class="label">Event Location<label>
+                        <div class="control">
+                            <input class = "input" v-model="new_event_location" placeholder="Where is it?"/>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label class="label">Event Description<label>
+                        <div class="control">
+                            <textarea class = "textarea" v-model="new_event_description" placeholder="Describe the Event."></textarea>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label class="label">Event Price<label>
+                        <div class="control">
+                            <input class = "input" type="number" v-model="new_event_price" placeholder="How much does it cost?"/>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label class="label">Event Date<label>
+                        <div class="control">
+                            <input class = "input" type="date" onfocus="this.min=new Date().toISOString().split('T')[0]" v-model="new_event_date" placeholder="What date will the Event happen?"/>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label class="label">Event Time<label>
+                        <div class="control">
+                            <input class = "input" type="time" v-model="new_event_time" placeholder="When during the day will it be?"/>     
+                        </div>
+                    </div>
+                    <div class="control">
+                        Insert Pictures of the Event:
+                        <div v-if="!selection_done" class="field has-addons block">
+                            <p class="control">
+                            <div class="file is-info">
+                                <label class="file-label">
+                                <input class="file-input" type="file"
+                                        accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*"
+                                        @change="select_file($event)">
+                                <span class="file-cta">
+                                    <span class="file-label">
+                                    <span>Choose file</span>
                                     </span>
-                                  </label>
-                                </div>
-                              </p>
+                                </span>
+                                </label>
                             </div>
-                            <template v-if="selection_done && !uploaded">
-                              <div class="block">
-                                <img width="400" :src="img_url" />
-                              </div>
-                              <div class="block">
-                                <button class="button is-success" :disabled="uploading" @click="upload_file">
-                                  <span class="icon is-small">
-                                    <i v-if="!uploading" class="fa fa-upload"></i>
-                                    <i v-if="uploading" class="fa fa-spinner fa-pulse fa-fw"></i>
-                                  </span>
-                                  <span>Upload</span>
-                                </button>
-                              </div>
-                            </template>
-                            <div v-if="uploaded">
-                              <i class="fa fa-check"></i> Uploaded!
-                            </div>
+                            </p>
                         </div>
+                        <template v-if="selection_done && !uploaded">
+                            <div class="block">
+                            <img width="400" :src="img_url" />
+                            </div>
+                            <div class="block">
+                            <button class="button is-success" :disabled="uploading" @click="upload_file">
+                                <span class="icon is-small">
+                                <i v-if="!uploading" class="fa fa-upload"></i>
+                                <i v-if="uploading" class="fa fa-spinner fa-pulse fa-fw"></i>
+                                </span>
+                                <span>Upload</span>
+                            </button>
+                            </div>
+                        </template>
+                        <div v-if="uploaded">
+                            <i class="fa fa-check"></i> Uploaded!
+                        </div>
+                    </div>
                     </div>
                     <div class="field">
                         <div class="control">
@@ -163,8 +196,10 @@
                             <input type="submit" @click="set_add_status(false)" value="Cancel" class="button is-warning">
                         </div>
                     </div>
-                </div>
             </div>
+           
+
+
             <div v-else>
                 <h2 class="subtitle">New Events</h2>
                 <div class="section pt-0 container">
