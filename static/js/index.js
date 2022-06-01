@@ -25,9 +25,6 @@ let init = (app) => {
         new_event_date: "",
         new_event_time: "",
         // new_event_image: "",
-        new_event_time_guidelines: "",
-        new_event_alcohol: "",
-        new_event_marijuana: "",
         open_conversation: -1,
         add_message: "",
         attributes: [ 
@@ -81,15 +78,11 @@ let init = (app) => {
                 event_date: app.vue.new_event_date,
                 event_time: app.vue.new_event_time,
                 // event_image: app.vue.new_event_image,
-                event_time_guidelines: app.vue.new_event_time_guidelines,
-                event_alcohol: app.vue.new_event_alcohol,
-                event_marijuana: app.vue.new_event_marijuana,
                 _state: {host: "clean", event_name: "clean",
                         location: "clean", description: "clean",
                         price: "clean", date: "clean",
                         time: "clean"},
             }).then(function (response) {
-                console.log(response)
                 app.vue.events.push({
                     id: response.data.event.id,
                     host: app.vue.new_event_host,
@@ -101,9 +94,6 @@ let init = (app) => {
                     time: app.vue.new_event_time,
                     when: response.data.event.when,
                     // image: app.vue.new_event_image,
-                    guidelines: app.vue.new_event_time_guidelines,
-                    alcohol: app.vue.new_event_alcohol,
-                    marijuana: app.vue.new_event_marijuana,
                     created_by: response.data.event.created_by,
                     creation_date: response.data.event.creation_date,
 
@@ -114,8 +104,7 @@ let init = (app) => {
                         host: "clean", event_name: "clean",
                         location: "clean", description: "clean", 
                         price: "clean", date: "clean",
-                        time: "clean", guidelines: "clean", alcohol: "clean",
-                        marijuana: "clean"
+                        time: "clean"
                     },
                     _server_vals: {
                         host: app.vue.new_event_host,
@@ -126,9 +115,6 @@ let init = (app) => {
                         date: app.vue.new_event_date,
                         time: app.vue.new_event_time,
                         // image: app.vue.new_event_image,
-                        guidelines: app.vue.new_event_time_guidelines,
-                        alcohol: app.vue.new_event_alcohol,
-                        marijuana: app.vue.new_event_marijuana,
                     }
                 });
                 app.complete(app.vue.events);
@@ -381,8 +367,6 @@ let init = (app) => {
             app.vue.events = events;
             app.vue.user_email = response.data.user_email;
             app.vue.attending = response.data.attending;
-
-            app.upload_file = response.data.upload_file;
 
             let conversations = response.data.conversations;
             app.enumerate(conversations);

@@ -38,9 +38,6 @@ from .common import Field
 
 url_signer = URLSigner(session)
 
-def get_time():
-    return datetime.datetime.utcnow()
-
 @action('index')
 @action.uses('index.html', db, auth.user, url_signer)
 def index():
@@ -100,11 +97,6 @@ def add():
         price=request.json.get('event_price'),
         date=request.json.get('event_date'),
         time=request.json.get('event_time'),
-        time_guidelines=request.json.get('event_time_guidelines'),
-        alcohol=request.json.get('event_alcohol'),
-        marijuana=request.json.get('event_marijuana'),
-        created_by=get_user_email(),
-        creation_date=get_time(),
     )
     event = db.event[id]
     return dict(event=event)
