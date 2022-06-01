@@ -257,6 +257,25 @@ def unread_messages():
     #print("unread list for", get_user_email(), "=", unread_list)
     return dict(unread_messages=unread_list)
 
+# def download1():
+#     return response.download(request, db)
+
+# def download2():
+#     pic = db(db.images).select().first().picture   #select first picture
+#     return dict(pic=pic)
+
+# @action('file_upload', method="PUT")
+# @action.uses() # Add here things you might want to use.
+# def file_upload():
+#     file_name = request.params.get("file_name")
+#     file_type = request.params.get("file_type")
+#     uploaded_file = request.body # This is a file, you can read it.
+#     # Diagnostics
+#     print("Uploaded", file_name, "of type", file_type)
+#     print("Content:", uploaded_file.read())
+#     return "ok"
+
+
 @action('upload_image', method="POST")
 @action.uses(url_signer.verify(), db)
 def upload_image():

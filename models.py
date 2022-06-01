@@ -39,12 +39,17 @@ db.define_table(
     Field('price', 'float', default=0),
     Field('date', 'date', requires=IS_NOT_EMPTY()),
     Field('time', 'time', requires=IS_NOT_EMPTY()),
+    # Field('image', 'upload', uploadfield='picture_file'),
+    # Field('picture_file', 'blob'),
     Field('created_by', default=get_user_email),
     Field('creation_date', 'datetime', default=get_time),
+
     Field('image', 'text'),
     Field('time_guidelines', requires=IS_NOT_EMPTY()),
     Field('alcohol', requires=IS_NOT_EMPTY()),
     Field('marijuana', requires=IS_NOT_EMPTY()),
+    # Field('image', 'upload', uploadfield='picture_file'),
+    # Field('picture_file', 'blob'),
     Field('created_by', requires=IS_NOT_EMPTY()),
     Field('creation_date', 'datetime', requires=IS_NOT_EMPTY()),
 )
