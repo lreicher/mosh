@@ -52,6 +52,7 @@ def index():
         set_attending_url=URL('attend', signer=url_signer),
         send_message_url=URL('message', signer=url_signer),
         load_messages_url=URL('load_messages', signer=url_signer),
+        load_unread_messages_url=URL('unread_messages', signer=url_signer),
         load_conversations_url=URL('load_conversations', signer=url_signer),
         start_conversation_url=URL('start_conversation', signer=url_signer),
         my_callback_url = URL('my_callback', signer=url_signer),
@@ -200,12 +201,50 @@ def load_conversations():
 @action('load_messages', method="GET")
 @action.uses(db, session, auth.user, url_signer.verify())
 def load_messages():
+    # Read conversation id
     conversation_id = request.params.get('conversation_id')
     assert conversation_id is not None
+    # Assert that user is in conversation
+    conversation = db(
+        (db.conversation.id == conversation_id)
+    ).select().first()
+    user_id = get_user()
+    assert user_id == conversation.host_id or user_id == conversation.user_id
+    # Get all the messages in this conversation
     messages = db(
         (db.message.conversation_id == conversation_id)
     ).select(orderby=db.message.date).as_list()
+    # Get this user's unread messages and set is_read to True
+    unread = db(
+        (db.message.conversation_id == conversation_id) &
+        (db.message.creator_email != get_user_email()) &
+        (db.message.is_read == False)
+    )
+    unread.update(is_read=True)
     return dict(messages=messages)
+
+@action('unread_messages', method="GET")
+@action.uses(db, session, auth.user, url_signer.verify())
+def unread_messages():
+    # Read conversation id
+    conversation_id = request.params.get('conversation_id')
+    assert conversation_id is not None
+    # Assert user is part of this conversation
+    conversation = db(
+        (db.conversation.id == conversation_id)
+    ).select().first()
+    user_id = get_user()
+    assert user_id == conversation.host_id or user_id == conversation.user_id
+    # Get all unread messages for this user and set is_read to True
+    unread = db(
+        (db.message.conversation_id == conversation_id) &
+        (db.message.creator_email != get_user_email()) &
+        (db.message.is_read == False)
+    )
+    unread_list = unread.select(orderby=db.message.date).as_list()
+    unread.update(is_read=True)
+    #print("unread list for", get_user_email(), "=", unread_list)
+    return dict(unread_messages=unread_list)
 
 # def download1():
 #     return response.download(request, db)

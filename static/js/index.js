@@ -195,7 +195,7 @@ let init = (app) => {
         }
     };
 
-    // loads a single conversation into a modal
+    // loads and refreshes a single conversation into a modal
     app.load_conversation = function (convo_idx) {
         let convo = app.vue.conversations[convo_idx];
         app.vue.open_conversation = convo;
@@ -204,15 +204,16 @@ let init = (app) => {
         });
         const id = setInterval(load_messages, 5000);
         function load_messages() {
-            console.log("Loading messages");
+            //console.log("Loading messages");
             if (app.vue.open_conversation === -1) {
-                console.log("Stopping load messages");
+                //console.log("Stopping load messages");
                 clearInterval(id);
             }
             else {
-                console.log("Sending HTTP GET to retrieve messages");
-                axios.get(load_messages_url, {params: {conversation_id: app.vue.open_conversation.id}}).then(function (response) {
-                    app.vue.messages = response.data.messages;
+                //console.log("Sending HTTP GET to retrieve messages");
+                axios.get(load_unread_messages_url, {params: {conversation_id: app.vue.open_conversation.id}}).then(function (response) {
+                    let unread = response.data.unread_messages;
+                    app.vue.messages.push.apply(app.vue.messages, unread);
                 });
             }
         }

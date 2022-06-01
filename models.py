@@ -64,6 +64,7 @@ db.define_table(
     Field('creator_email', requires=IS_NOT_EMPTY()),
     Field('message', requires=IS_NOT_EMPTY()),
     Field('date', 'datetime', default=get_time),
+    Field('is_read', 'boolean', default=False, requires=IS_NOT_EMPTY())
 )
 
 db.define_table(
