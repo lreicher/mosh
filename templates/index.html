@@ -68,11 +68,30 @@
             </div>
             <div class="column is-one-quarter">
                 <!-- <div class="section" id="vue-target"> -->
+                    {{'attending'}}  
                     <v-calendar 
-                        :attributes='attributes'
+                        :attributes='vcattending'
                         :min-date="new Date()"
                     >
                     </v-calendar>
+                    <v-calendar 
+                        :attributes='vchosting'
+                        :min-date="new Date()"
+                    >
+                    </v-calendar>
+                    {{'hosting'}}  
+                    <v-calendar 
+                        :attributes='vcfeed'
+                        :min-date="new Date()"
+                    >
+                    </v-calendar>
+                    {{'feed'}}
+                    <v-calendar 
+                        :attributes='vcall'
+                        :min-date="new Date()"
+                    >
+                    </v-calendar>
+                    {{'all'}}
                 <!--</div>-->
             </div>
         </div>

@@ -29,15 +29,36 @@ let init = (app) => {
         new_event_marijuana: "",
         open_conversation: -1,
         add_message: "",
-        attributes: [ 
+        vcattending: [ 
             {
-                key: 'today',
+                key: -1,
                 highlight: true,
                 dates: new Date(),
             },
         ],
+        vchosting: [ 
+            {
+                key: -1,
+                highlight: true,
+                dates: new Date(),
+            },
+        ],
+        vcall: [ 
+            {
+                key: -1,
+                highlight: true,
+                dates: new Date(),
+            },
+        ],
+        vcfeed: [ 
+            {
+                key: -1,
+                highlight: true,
+                dates: new Date(),
+            },
+        ],
+        vcolor: {'attending': 'green', 'hosting': 'red', 'feed': 'yellow'},
         // Calendar List
-        vclist: [],
         // Complete as you see fit.
     };
 
@@ -127,9 +148,12 @@ let init = (app) => {
                         time_guidelines: app.vue.new_event_time_guidelines,
                         alcohol: app.vue.new_event_alcohol,
                         marijuana: app.vue.new_event_marijuana,
-                    }
+                    },
                 });
-                
+                let vcevent = response.data.event;
+                console.log(vcevent);
+                app.calendar_add_event(vcevent,app.vue.vchosting,String(app.data.vcolor['hosting']));
+                app.calendar_add_event(vcevent,app.vue.vcall,String(app.data.vcolor['hosting']));
                 app.enumerate(app.vue.events);
                 app.reset_event_form();
                 app.set_add_status(false);
@@ -141,6 +165,10 @@ let init = (app) => {
         axios.post(delete_event_url, {id: id}).then(function (response) {
             for (let i = 0; i < app.vue.events.length; i++) {
                 if (app.vue.events[i].id === id) {
+                    app.calendar_delet_event(id,app.vue.vchosting);
+                    app.calendar_delet_event(id,app.vue.vcattending);
+                    app.calendar_delet_event(id,app.vue.vcfeed);
+                    app.calendar_delet_event(id,app.vue.vcall);
                     app.vue.events.splice(i, 1);
                     app.enumerate(app.vue.events);
                     break;
@@ -196,10 +224,14 @@ let init = (app) => {
         event.attending = !event.attending;
         axios.post(set_attending_url, {event_id: event.id, status: event.attending});
         if(event.attending){
-            app.calendar_add_event(event);
+            //onsole.log(String(app.data.vcolor['attending']));
+            app.calendar_add_event(event,app.vue.vcattending,String(app.data.vcolor['attending']));
+            app.calendar_add_event(event,app.vue.vcall,String(app.data.vcolor['attending']));
         }
         else{
-            app.calendar_delet_event(event.id);
+            app.calendar_delet_event(event.id,app.vue.vcattending);
+            app.calendar_delet_event(event.id,app.vue.vcall);
+
         }
     };
 
@@ -278,18 +310,15 @@ let init = (app) => {
     };
 
     // Calendar Functions
-    app.calendar_add_event = function(event) {
-        let colors = Array('gray', 'red', 'orange', 'yellow', 'green', 'teal', 'blue', 'indigo', 'purple', 'pink');
-        let color = colors[Math.floor(Math.random()*colors.length)];
-        //console.log(String(date));
+    app.calendar_add_event = function(event,vcalendar,color) {
+
+        // parse the date
         let list_date = String(event.date).split("-");
         let year = Number(list_date[0]);
-        //console.log(year);
         let month = Number(list_date[1]) - 1;
-        //console.log(month);
         let day = Number(list_date[2]);
-        //console.log(day);
         
+        // parse the time
         let list_time = String(event.time).split(":");
         let hour = Number(list_time[0]);
         let ampm = 'AM';
@@ -297,11 +326,11 @@ let init = (app) => {
             hour = hour - 12;
             ampm = 'PM'
         }
-        console.log(Number(list_time[0]));
-        console.log(Number(list_time[1]));
-        // add vue
-        app.data.attributes.push(
+
+        // add to calendar
+        vcalendar.push(
             {
+                key: event.id,
                 bar: color,   
                 dates: new Date(year, month , day),
                 popover: {
@@ -313,28 +342,15 @@ let init = (app) => {
                 },
             }
         );
-        app.data.vclist.push(event.id);
-        for(let i = 0; i < app.data.attributes.length; i++){
-            console.log(app.data.attributes[i]);
-        }
-        for(let i = 0; i < app.data.vclist.length; i++){
-            console.log(app.data.vclist[i]);
-        }
-        return 
+
     };
 
-    app.calendar_delet_event = function(id) {
-        console.log(app.data.vclist.indexOf(id));
-        let index_delet_event = app.data.vclist.indexOf(id)
-        delete app.vue.attributes[(index_delet_event + 1)];
-        delete app.vue.vclist[(index_delet_event)];
-        for(let i = 0; i < app.data.attributes.length; i++){
-            console.log(app.data.attributes[i]);
+    app.calendar_delet_event = function(id,vcalendar) {
+        let index_delet_event = vcalendar.findIndex(x=>x.key === id);
+        // if element exists
+        if(index_delet_event != -1){
+            vcalendar.splice(index_delet_event,1);
         }
-        for(let i = 0; i < app.data.vclist.length; i++){
-            console.log(app.data.vclist[i]);
-        }
-        return 
     };
 
     // This contains all the methods.
@@ -383,10 +399,12 @@ let init = (app) => {
 
         }).then(() => {
             for (let event of app.vue.events) {
+                app.vue.calendar_add_event(event,app.vue.vcfeed,String(app.data.vcolor['feed']));
                 for (let attend of app.vue.attending) {
                     if (event.id === attend.event_id && attend.attending === true) {
                         event.attending = true;
-                        app.vue.calendar_add_event(event);
+                        app.vue.calendar_add_event(event,app.vue.vcattending,String(app.data.vcolor['attending']));
+                        app.vue.calendar_add_event(event,app.vue.vcall,String(app.data.vcolor['attending']));
                         break;
                     }
                 }
