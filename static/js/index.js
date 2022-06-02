@@ -400,6 +400,9 @@ let init = (app) => {
         }).then(() => {
             for (let event of app.vue.events) {
                 app.vue.calendar_add_event(event,app.vue.vcfeed,String(app.data.vcolor['feed']));
+                if (event.created_by === app.vue.user_email) {
+                    app.vue.calendar_add_event(event,app.vue.vchosting,String(app.data.vcolor['hosting']));
+                }
                 for (let attend of app.vue.attending) {
                     if (event.id === attend.event_id && attend.attending === true) {
                         event.attending = true;
