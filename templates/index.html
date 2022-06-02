@@ -106,18 +106,41 @@
                     <div v-if="e.attending === true" class="card mb-3">
                         <div class="card-header">
                             <div class="card-header-title">{{e.event_name}}</div>
+                            <div class="card-header-icon">
+                                <span class="icon has-text-warning">
+                                    <i class="fa fa-ticket" aria-hidden="true"></i>
+                                </span>
+                                <span v-if="e.price === 0"><b>Free</b></span>
+                                <span v-else><b>${{e.price}}</b></span>
+                            </div>
                         </div>
                         <div class="card-image">
-                            <figure class="image">
-                                <img src="mosh_logo.png" alt="Placeholder image">
-                            </figure>
+                            <!--Event photo goes here-->
                         </div>
                         <div class="card-content">
                             <div class="content">
                                 <div class="columns">
-                                    <div class="column">{{e.location}}</div>
-                                    <div class="column">{{e.when}}</div>
+                                    <div class="column">
+                                        <div class="icon-text">
+                                            <span class="icon has-text-warning">
+                                                <i class="fa fa-map-marker" aria-hidden="true"></i>
+                                            </span>
+                                            <span><b>Location</b></span>
+                                        </div>
+                                        {{e.location}}
+                                    </div>
+                                    <div class="column">
+                                        <div class="icon-text">
+                                            <span class="icon has-text-warning">
+                                                <i class="fa fa-clock-o" aria-hidden="true"></i>
+                                            </span>
+                                            <span><b>When</b></span>
+                                        </div>
+                                        <p class="block">{{e.when}}</p>
+                                      
+                                    </div>
                                 </div>
+                                
                             </div>
                         </div>
                     </div>
