@@ -59,7 +59,7 @@ def index():
         load_conversations_url=URL('load_conversations', signer=url_signer),
         start_conversation_url=URL('start_conversation', signer=url_signer),
         my_callback_url = URL('my_callback', signer=url_signer),
-        file_upload_url = URL('file_upload', signer=url_signer),
+        upload_image_url = URL('upload_image', signer=url_signer),
     )
 
 @action('load_feed')
@@ -254,20 +254,10 @@ def unread_messages():
     #print("unread list for", get_user_email(), "=", unread_list)
     return dict(unread_messages=unread_list)
 
-# def download1():
-#     return response.download(request, db)
-
-# def download2():
-#     pic = db(db.images).select().first().picture   #select first picture
-#     return dict(pic=pic)
-
-@action('file_upload', method="PUT")
-@action.uses() # Add here things you might want to use.
-def file_upload():
-    file_name = request.params.get("file_name")
-    file_type = request.params.get("file_type")
-    uploaded_file = request.body # This is a file, you can read it.
-    # Diagnostics
-    print("Uploaded", file_name, "of type", file_type)
-    print("Content:", uploaded_file.read())
+@action('upload_image', method="POST")
+@action.uses(url_signer.verify(), db)
+def upload_image():
+    event_id = request.json.get("event_id")
+    image = request.json.get("image")
+    db(db.event.id == event_id).update(image=image)
     return "ok"

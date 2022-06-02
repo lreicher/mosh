@@ -42,8 +42,7 @@ db.define_table(
     Field('time_guidelines', requires=IS_NOT_EMPTY()),
     Field('alcohol', requires=IS_NOT_EMPTY()),
     Field('marijuana', requires=IS_NOT_EMPTY()),
-    Field('image', 'upload', uploadfield='picture_file'),
-    Field('picture_file', 'blob'),
+    Field('image', 'text'),
     Field('created_by', requires=IS_NOT_EMPTY()),
     Field('creation_date', 'datetime', requires=IS_NOT_EMPTY()),
 )
