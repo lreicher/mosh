@@ -28,6 +28,7 @@ let init = (app) => {
         new_event_alcohol: "",
         new_event_marijuana: "",
         open_conversation: -1,
+        expanded_event: -1,
         add_message: "",
         vcattending: [ 
             {
@@ -309,6 +310,11 @@ let init = (app) => {
         }
     };
 
+    app.expand_event = function (event_idx) {
+        let event = app.vue.events[event_idx];
+        app.vue.expanded_event=event;
+    };
+
     // Calendar Functions
     app.calendar_add_event = function(event,vcalendar,color) {
 
@@ -370,6 +376,7 @@ let init = (app) => {
         upload_file: app.upload_file,
         calendar_add_event: app.calendar_add_event,
         calendar_delet_event: app.calendar_delet_event,
+        expand_event: app.expand_event
     };
 
     // This creates the Vue instance.

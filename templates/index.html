@@ -21,7 +21,7 @@
 
     <!-- MyEvents Page -->
     <div v-if="view_myevents" class="container">
-        <div class="columns is-mobile">
+        <div class="columns">
             <div class="column is-three-quarters">
                 <table class="table is-striped is-halfwidth">
                     <tr>
@@ -98,9 +98,10 @@
     </div>
 
     <!-- Main Feed -->
-    <div v-else class="columns block is-mobile mt-3">
+    <div v-else class="columns block mt-3">
         <div class="column is-3">
             <div class="box">
+                <!-- SAVED PARTIES COLUMN -->
                 <h2 class="subtitle">Saved Parties</h2>
                 <div v-for="e in events">
                     <div v-if="e.attending === true" class="card mb-3">
@@ -137,9 +138,9 @@
                                             <span><b>When</b></span>
                                         </div>
                                         <p class="block">{{e.when}}</p>
-                                      
                                     </div>
                                 </div>
+                                <button class = "button" @click="expand_event(e._idx)">Details</button>
                                 
                             </div>
                         </div>
@@ -417,6 +418,7 @@
               </div>
             </div>
 
+            <!-- OPEN CONVO MODAL -->
             <div v-if="open_conversation !== -1" class="modal is-active">
                 <div class="modal-background"></div>
                 <div class="modal-card">
@@ -467,6 +469,96 @@
                     </footer>
                 </div>
             </div>
+
+            <!-- EXPAND EVENT MODAL-->
+            <div v-if="expanded_event !== -1" class="modal is-active">
+                <div class="modal-background"></div>
+                    <div class="modal-card">
+                        <div class="modal-card-head">
+                            <div class="card-header-title">{{expanded_event.event_name}}</div>
+                            <div class="card-header-icon">
+                                <div class="icon-text">
+                                    <span class="icon has-text-warning">
+                                        <i class="fa fa-ticket" aria-hidden="true"></i>
+                                    </span>
+                                    <span v-if="expanded_event.price === 0"><b>Free</b></span>
+                                    <span v-else><b>${{expanded_event.price}}</b></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-image">
+                            <figure class="image">
+                                <!-- TODO Add something here for images -->
+                            </figure>
+                        </div>
+                        <div class="modal-card-body">
+                            <div class="content">
+                                <div class="columns">
+                                    <div class="column is-three-fifths">
+                                        <div class="icon-text">
+                                            <span class="icon has-text-warning">
+                                                <i class="fa fa-map-marker" aria-hidden="true"></i>
+                                            </span>
+                                            <span><b>Location</b></span>
+                                        </div>
+                                        <p class="block">{{expanded_event.location}}</p>
+                                        <div class="icon-text">
+                                            <span class="icon has-text-warning">
+                                                <i class="fa fa-clock-o" aria-hidden="true"></i>
+                                            </span>
+                                            <span><b>When</b></span>
+                                        </div>
+                                        <p class="block">{{expanded_event.when}}</p>
+                                        <div class="icon-text">
+                                            <span class="icon has-text-warning">
+                                                <i class="fa fa-asterisk" aria-hidden="true"></i>
+                                            </span>
+                                            <span><b>{{expanded_event.time_guidelines}}</b></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="column">
+                                        <div class="icon-text">
+                                            <span class="icon has-text-warning">
+                                                <i class="fa fa-glass" aria-hidden="true"></i>
+                                            </span>
+                                            <span><b>Alcohol</b></span>
+                                        </div>
+                                        <p class="block">{{expanded_event.alcohol}}</p>
+                                        <div class="icon-text">
+                                            <span class="icon has-text-warning">
+                                                <i class="fa fa-leaf" aria-hidden="true"></i>
+                                            </span>
+                                            <span><b>Herbs</b></span>
+                                        </div>
+                                        <p class="block">{{expanded_event.marijuana}}</p>
+                                    </div>
+                                </div>
+                                <div class="mt-1">{{expanded_event.description}}</div>
+                            </div>
+
+
+                            <footer class="modal-card-foot">
+                                <button v-if="expanded_event.attending" @click="toggle_attending(expanded_event._idx)" class="button card-footer-item is-primary">
+                                    <i class="fa fa-minus fa-fw"></i>Unattend
+                                </button>
+                                <button v-else @click="toggle_attending(expanded_event._idx)" class="button card-footer-item is-primary">
+                                    <i class="fa fa-plus fa-fw"></i>Attend
+                                </button>
+                                <span @click="expanded_event = -1">
+                                    <button v-if="expanded_event.created_by !== user_email" @click="start_conversation(expanded_event._idx)" class="button card-footer-item is-primary">
+                                
+                                        <i class="fa fa-envelope fa-fw"></i>Start Conversation
+                                    </button>
+                                </span>
+                                <button @click = "expanded_event = -1" class="button">Close</button>
+                            </footer>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+
 
         </div>
     </div>
