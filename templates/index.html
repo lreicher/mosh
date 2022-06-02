@@ -281,73 +281,81 @@
                 <h2 class="subtitle">New Events</h2>
                 <div class="section pt-0 container">
                     <div v-for="e in events" class="card mb-3">
-                    <div class="card-header">
-                        <div class="card-header-title">{{e.event_name}}</div>
-                    </div>
-                    <div class="card-image">
-                        <figure class="image">
-                            <!-- TODO Add something here for images -->
-                        </figure>
-                    </div>
-                    <div class="card-content">
-                        <div class="content">
-                            <div class="columns">
-                                <div class="column is-one-half">
-                                    
-                                    <span class="icon">
-                                      <i class="fa fa-map-marker" aria-hidden="true"></i>
+                        <div class="card-header">
+                            <div class="card-header-title">{{e.event_name}}</div>
+                            <div class="card-header-icon">
+                                <div class="icon-text">
+                                    <span class="icon has-text-warning">
+                                        <i class="fa fa-ticket" aria-hidden="true"></i>
                                     </span>
-                                    <h6>{{e.location}}</h6>
-                                    {{e.when}}
-                                    <br>
-
-                                    {{e.guidelines}}
-                                </div>
-        
-                                <div class="column is-one-quarter">
-                                    <h6>Substances:</h6>
-                                    
-                                        
-                                    <span class="icon is-relative">
-                                    <i class="fa fa-glass" aria-hidden="true"></i>
-                                    </span>
-                                    <p>({{e.alcohol}}) </p>
-                                
-                                    <span class="icon is-relative">
-                                        <i class ="fa fa-leaf" aria-hidden="true"></i>
-                                    </span>
-                                    <p>({{e.marijuana}}) </p>
-                                        
-                                    
-                                </div>
-                                <div class="column is-one-quarter">
-                                    <span class="span is-pulled-right">
-                                        <h6>Price: </h6>
-                                        <span class="icon">
-                                            <i class="fa fa-ticket" aria-hidden="true"></i>
-                                        </span>
-                                        <div v-if="e.price === 0">
-                                        Free
-                                        </div>
-                                        <div v-else>
-                                        ${{e.price}}
-                                        </div>
-                                    </span>
+                                    <span v-if="e.price === 0"><b>Free</b></span>
+                                    <span v-else><b>${{e.price}}</b></span>
                                 </div>
                             </div>
                         </div>
-                        <p class="mt-1">{{e.description}}</p>
-                        <button v-if="e.attending" @click="toggle_attending(e._idx)" class="button is-primary">
-                            <i class="fa fa-minus fa-fw"></i>Unattend
-                        </button>
-                        <button v-else @click="toggle_attending(e._idx)" class="button is-primary">
-                            <i class="fa fa-plus fa-fw"></i>Attend
-                        </button>
-                        <button v-if="e.created_by !== user_email" @click="start_conversation(e._idx)" class="button is-primary">
-                            <i class="fa fa-envelope fa-fw"></i>Start Conversation
-                        </button>
+                        <div class="card-image">
+                            <figure class="image">
+                                <!-- TODO Add something here for images -->
+                            </figure>
+                        </div>
+                        <div class="card-content">
+                            <div class="content">
+                                <div class="columns">
+                                    <div class="column is-three-fifths">
+                                        <div class="icon-text">
+                                            <span class="icon has-text-warning">
+                                                <i class="fa fa-map-marker" aria-hidden="true"></i>
+                                            </span>
+                                            <span><b>Location</b></span>
+                                        </div>
+                                        <p class="block">{{e.location}}</p>
+                                        <div class="icon-text">
+                                            <span class="icon has-text-warning">
+                                                <i class="fa fa-clock-o" aria-hidden="true"></i>
+                                            </span>
+                                            <span><b>When</b></span>
+                                        </div>
+                                        <p class="block">{{e.when}}</p>
+                                        <div class="icon-text">
+                                            <span class="icon has-text-warning">
+                                                <i class="fa fa-asterisk" aria-hidden="true"></i>
+                                            </span>
+                                            <span><b>{{e.time_guidelines}}</b></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="column">
+                                        <div class="icon-text">
+                                            <span class="icon has-text-warning">
+                                                <i class="fa fa-glass" aria-hidden="true"></i>
+                                            </span>
+                                            <span><b>Alcohol</b></span>
+                                        </div>
+                                        <p class="block">{{e.alcohol}}</p>
+                                        <div class="icon-text">
+                                            <span class="icon has-text-warning">
+                                                <i class="fa fa-leaf" aria-hidden="true"></i>
+                                            </span>
+                                            <span><b>Herbs</b></span>
+                                        </div>
+                                        <p class="block">{{e.marijuana}}</p>
+                                    </div>
+                                </div>
+                                <div class="mt-1">{{e.description}}</div>
+                            </div>
+                            <footer class="card-footer">
+                                <button v-if="e.attending" @click="toggle_attending(e._idx)" class="button card-footer-item is-primary">
+                                    <i class="fa fa-minus fa-fw"></i>Unattend
+                                </button>
+                                <button v-else @click="toggle_attending(e._idx)" class="button card-footer-item is-primary">
+                                    <i class="fa fa-plus fa-fw"></i>Attend
+                                </button>
+                                <button v-if="e.created_by !== user_email" @click="start_conversation(e._idx)" class="button card-footer-item is-primary">
+                                    <i class="fa fa-envelope fa-fw"></i>Start Conversation
+                                </button>
+                            </footer>
+                        </div>
                     </div>
-                </div>
                 </div>
             </div>
         </div>

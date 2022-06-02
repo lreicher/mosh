@@ -53,11 +53,13 @@ let init = (app) => {
             e._state = {host: "clean", event_name: "clean",
                 location: "clean", description: "clean",
                 price: "clean", date: "clean",
-                time: "clean"};
+                time: "clean", time_guidelines: "clean",
+                alcohol: "clean", marijuana: "clean"};
             e._server_vals = {host: e.host, event_name: e.event_name,
                 location: e.location, description: e.description,
                 price: e.price, date: e.date,
-                time: e.time};
+                time: e.time, time_guidelines: e.time_guidelines,
+                alcohol: e.alcohol, marijuana: e.marijuana};
         });
         return a;
     };
@@ -84,7 +86,8 @@ let init = (app) => {
                 _state: {host: "clean", event_name: "clean",
                         location: "clean", description: "clean",
                         price: "clean", date: "clean",
-                        time: "clean"},
+                        time: "clean", time_guidelines: "clean",
+                        alcohol: "clean", marijuana: "clean"},
             }).then(function (response) {
                 console.log(response)
                 app.vue.events.push({
@@ -97,7 +100,7 @@ let init = (app) => {
                     date: app.vue.new_event_date,
                     time: app.vue.new_event_time,
                     when: response.data.event.when,
-                    guidelines: app.vue.new_event_time_guidelines,
+                    time_guidelines: app.vue.new_event_time_guidelines,
                     alcohol: app.vue.new_event_alcohol,
                     marijuana: app.vue.new_event_marijuana,
                     created_by: response.data.event.created_by,
@@ -110,7 +113,7 @@ let init = (app) => {
                         host: "clean", event_name: "clean",
                         location: "clean", description: "clean", 
                         price: "clean", date: "clean",
-                        time: "clean", guidelines: "clean", alcohol: "clean",
+                        time: "clean", time_guidelines: "clean", alcohol: "clean",
                         marijuana: "clean"
                     },
                     _server_vals: {
@@ -121,7 +124,7 @@ let init = (app) => {
                         price: app.vue.new_event_price,
                         date: app.vue.new_event_date,
                         time: app.vue.new_event_time,
-                        guidelines: app.vue.new_event_time_guidelines,
+                        time_guidelines: app.vue.new_event_time_guidelines,
                         alcohol: app.vue.new_event_alcohol,
                         marijuana: app.vue.new_event_marijuana,
                     }
@@ -154,6 +157,9 @@ let init = (app) => {
         app.vue.new_event_price = 0;
         app.vue.new_event_date = "";
         app.vue.new_event_time = "";
+        app.vue.new_event_time_guidelines = "";
+        app.vue.new_event_alcohol = "";
+        app.vue.new_event_marijuana = "";
     };
 
     app.set_add_status = function (new_status) {
