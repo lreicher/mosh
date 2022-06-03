@@ -317,21 +317,31 @@ let init = (app) => {
 
     // Calendar Functions
     app.calendar_add_event = function(event,vcalendar,color) {
-
         // parse the date
         let list_date = String(event.date).split("-");
         let year = Number(list_date[0]);
         let month = Number(list_date[1]) - 1;
         let day = Number(list_date[2]);
-        
+        let time_lable = String('N/A');
+        console.log(event.time);
         // parse the time
-        let list_time = String(event.time).split(":");
-        let hour = Number(list_time[0]);
-        let ampm = 'AM';
-        if (hour > 12 ){
-            hour = hour - 12;
-            ampm = 'PM'
+        if ((event.time) === null){
+            console.log("CHECK 1\n");
+            time_lable = String('N/A');
         }
+        else{
+            console.log("CHECK 2\n");
+            let list_time = String(event.time).split(":");
+            console.log(String(event.time));
+            let hour = Number(list_time[0]);
+            let ampm = 'AM';
+            if (hour > 12 ){
+                hour = hour - 12;
+                ampm = 'PM'
+            }
+            time_lable = String(hour)+":"+String(Number(list_time[1]))+String(ampm);
+        }
+
 
         // add to calendar
         vcalendar.push(
@@ -341,7 +351,7 @@ let init = (app) => {
                 dates: new Date(year, month , day),
                 popover: {
                     label: "Event name: "+String(event.event_name)+'\n'+
-                           "Time: "+String(hour)+":"+String(Number(list_time[1]))+String(ampm),
+                            "Time: "+time_lable,
                     isInteractive: true,
                     transition: 'fade',
                     visibility: 'hover',
@@ -402,9 +412,13 @@ let init = (app) => {
 
         }).then(() => {
             for (let event of app.vue.events) {
-                app.vue.calendar_add_event(event,app.vue.vcfeed,String(app.data.vcolor['feed']));
                 if (event.created_by === app.vue.user_email) {
                     app.vue.calendar_add_event(event,app.vue.vchosting,String(app.data.vcolor['hosting']));
+                    app.vue.calendar_add_event(event,app.vue.vcall,String(app.data.vcolor['hosting']));
+                }
+                else{
+                    app.vue.calendar_add_event(event,app.vue.vcfeed,String(app.data.vcolor['feed']));
+                    app.vue.calendar_add_event(event,app.vue.vcall,String(app.data.vcolor['feed']));
                 }
                 for (let attend of app.vue.attending) {
                     if (event.id === attend.event_id && attend.attending === true) {
