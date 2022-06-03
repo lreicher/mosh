@@ -335,7 +335,7 @@ let init = (app) => {
 
         if (file) {
             let reader = new FileReader();
-            // reader.addEventListener("load", function () {
+            reader.addEventListener("load", function () {
                 // Sends the image to the server.
                 axios.post(upload_image_url,
                     {
@@ -347,7 +347,7 @@ let init = (app) => {
                         e.image = reader.result;
 
                     });
-            // });
+            });
             reader.readAsDataURL(file);
         }
     };

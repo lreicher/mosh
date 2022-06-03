@@ -269,47 +269,7 @@
                             <img v-if="e.image" width="50" :src="e.image" />
                         </div>
 
-
-
-
                         
-                        <!-- <div v-if="!selection_done" class="field has-addons block">
-                            <p class="control">
-                            <div class="file is-info">
-                                <label class="file-label">
-                                <input class="file-input" type="file"
-                                        accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*"
-                                        @change="select_file($event)">
-                                <span class="file-cta">
-                                    <span class="file-label">
-                                    <span>Choose file</span>
-                                    </span>
-                                </span>
-                                </label>
-                            </div>
-                            </p>
-                        </div>
-                        <template v-if="selection_done && !uploaded">
-                            <div class="block">
-                            <img width="400" :src="img_url" />
-                            </div>
-                            <div class="block">
-                            <button class="button is-success" :disabled="uploading" @click="upload_file">
-                                <span class="icon is-small">
-                                <i v-if="!uploading" class="fa fa-upload"></i>
-                                <i v-if="uploading" class="fa fa-spinner fa-pulse fa-fw"></i>
-                                </span>
-                                <span>Upload</span>
-                            </button>
-                            </div>
-                        </template>
-                        <div v-if="uploaded">
-                            <i class="fa fa-check"></i> Uploaded!
-                        </div> -->
-
-
-
-
                     </div>
                     </div>
                     <div class="field">
@@ -339,6 +299,12 @@
                         <div class="card-image">
                             <figure class="image">
                                 <!-- TODO Add something here for images -->
+                                <!-- <img src="mosh_logo.png" alt="Placeholder image"> -->
+
+                                <div v-for="e in events">
+                                    <img v-if="e.image" width="50" :src="e.image" />
+                                </div>
+
                             </figure>
                         </div>
                         <div class="card-content">
@@ -494,7 +460,7 @@
                         </div>
                         <div class="card-image">
                             <figure class="image">
-                                <!-- TODO Add something here for images -->
+                                <!-- TODO Add something here for images -->                                
                             </figure>
                         </div>
                         <div class="modal-card-body">
