@@ -61,6 +61,7 @@ db.define_table(
     Field('host_name', requires=IS_NOT_EMPTY()),
     Field('user_name', requires=IS_NOT_EMPTY()),
     Field('host_email', requires=IS_NOT_EMPTY()),
+    Field('event_name', requires=IS_NOT_EMPTY()),
 )
 
 db.define_table(

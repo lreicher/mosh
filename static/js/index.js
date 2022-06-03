@@ -400,10 +400,6 @@ let init = (app) => {
 
             app.upload_file = response.data.upload_file;
 
-            let conversations = response.data.conversations;
-            app.enumerate(conversations);
-            app.vue.conversations = conversations;
-
         }).then(() => {
             for (let event of app.vue.events) {
                 app.vue.calendar_add_event(event,app.vue.vcfeed,String(app.data.vcolor['feed']));
@@ -420,6 +416,12 @@ let init = (app) => {
                 }
             }
         });
+
+        axios.get(load_conversations_url).then( function (response) {
+            let conversations = response.data.conversations;
+            app.enumerate(conversations);
+            app.vue.conversations = conversations;
+        })
     };
 
     // Call to the initializer.

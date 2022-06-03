@@ -410,9 +410,11 @@
                   <div class="card-header-subtitle">
                       <span v-if="c.host_email == user_email">
                           {{c.user_name}}
+                           - {{c.event_name}}
                       </span>
                       <span v-else>
                           {{c.host_name}}
+                           - {{c.event_name}}
                       </span>
                   </div>
               </div>

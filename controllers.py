@@ -71,11 +71,7 @@ def load_feed():
         (db.attendees.user_id == auth.user_id) &
         (db.event.id == db.attendees.event_id)
     ).select(db.attendees.event_id,db.attendees.attending).as_list()
-    conversations = db(
-        ((db.conversation.host_id == get_user()) | (db.conversation.user_id == get_user()))
-    ).select().as_list()
-    #print("CONVOS: ", conversations)
-    return dict(events=events, attending=attending, user_email=user_email, conversations=conversations)
+    return dict(events=events, attending=attending, user_email=user_email)
 
 @action('myevents')
 @action.uses('myevents.html', url_signer, db, auth.user)
@@ -165,6 +161,7 @@ def start_conversation():
     e = db.event[event_id]
     assert e is not None
     # host id:
+    event_name = e.event_name
     host = db(db.auth_user.email == e.created_by).select(db.auth_user.id).first()
     # get row for host 
     hr = db(db.auth_user.id == host).select().first()
@@ -180,6 +177,7 @@ def start_conversation():
         host_name=host_name,
         user_name=user_name,
         host_email=host_email,
+        event_name=event_name,
     )
     conversation = db.conversation[conversation_id]
     return dict(conversation=conversation)
@@ -203,7 +201,6 @@ def load_conversations():
     conversations = db(
         ((db.conversation.host_id == get_user()) | (db.conversation.user_id == get_user()))
     ).select().as_list()
-    #print("CONVOS: ", conversations)
     return dict(conversations=conversations)
 
 @action('load_messages', method="GET")
