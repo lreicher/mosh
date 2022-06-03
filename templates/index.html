@@ -404,10 +404,9 @@
         </div>
         <div class="column is-3 box">
             <h2 class="subtitle">Messages</h2>
-            <div v-for="c in conversations" class="card mb-3" > <!-- Begin message card-->
-              <div @click="load_conversation(c._idx)" class="card-header"> <!--PUT @CLICK HERE FOR OPEN CONVO METHOD -->
+            <div v-for="c in conversations" class="block mb-1 py-1" > <!-- Begin message card-->
+              <div @click="load_conversation(c._idx)" class="box is-clickable is-capitalized"> <!--PUT @CLICK HERE FOR OPEN CONVO METHOD -->
                 <!-- recipient name, depending on whether user is the host or not -->
-                  <div class="card-header-subtitle">
                       <span v-if="c.host_email == user_email">
                           {{c.user_name}}
                            - {{c.event_name}}
@@ -416,7 +415,6 @@
                           {{c.host_name}}
                            - {{c.event_name}}
                       </span>
-                  </div>
               </div>
             </div>
 
@@ -426,31 +424,37 @@
                 <div class="modal-card">
                     <header class="modal-card-head">
                         <span v-if="open_conversation.host_email == user_email">
-                            <p class="modal-card-title">Message With {{open_conversation.user_name}}</p>
+                            <p class="modal-card-title is-capitalized">Message With {{open_conversation.user_name}}</p>
                         </span>
                         <span v-else>
-                            <p class="modal-card-title">Message With {{open_conversation.host_name}}</p>
+                            <p class="modal-card-title is-capitalized">Message With {{open_conversation.host_name}}</p>
                         </span>
                         
                     </header>
                     <section class="modal-card-body">
                         <!-- Display messages -->
-                        
-                        <div v-for="message in messages" class="columns is-vertical is-mobile">
-                            <div v-if="message.creator_email === user_email" class="column">
-                                <div class="box my-1 is-pulled-right has-background-info">
-                                    {{message.message}}
+                        <span v-if="messages.length === 0">
+                            <p  class="has-text-centered has-text-weight-light">
+                                Use the text box below to send messages!
+                            </p>
+                        </span>
+                        <span v-else>
+                            <div v-for="message in messages" class="columns is-vertical is-mobile">
+                                <div v-if="message.creator_email === user_email" class="column">
+                                    <div class="box my-1 is-pulled-right has-background-info">
+                                        {{message.message}}
+                                    </div>
+                                    <br>
                                 </div>
-                                <br>
-                            </div>
-                            <div v-else class="column is-mobile">
-                                <div class="box my-1 is-pulled-left">
-                                    {{message.message}}
+                                <div v-else class="column is-mobile">
+                                    <div class="box my-1 is-pulled-left">
+                                        {{message.message}}
+                                    </div>
+                                    <br>
                                 </div>
-                                <br>
                             </div>
-                            
-                        </div>
+                        </span>
+
                         
                     </section>
                     <footer class="modal-card-foot">
@@ -539,7 +543,6 @@
                                 <div class="mt-1">{{expanded_event.description}}</div>
                             </div>
 
-
                             <footer class="modal-card-foot">
                                 <button v-if="expanded_event.attending" @click="toggle_attending(expanded_event._idx)" class="button card-footer-item is-primary">
                                     <i class="fa fa-minus fa-fw"></i>Unattend
@@ -547,12 +550,9 @@
                                 <button v-else @click="toggle_attending(expanded_event._idx)" class="button card-footer-item is-primary">
                                     <i class="fa fa-plus fa-fw"></i>Attend
                                 </button>
-                                <span @click="expanded_event = -1">
-                                    <button v-if="expanded_event.created_by !== user_email" @click="start_conversation(expanded_event._idx)" class="button card-footer-item is-primary">
-                                
-                                        <i class="fa fa-envelope fa-fw"></i>Start Conversation
-                                    </button>
-                                </span>
+                                <button v-if="expanded_event.created_by !== user_email" @click="start_conversation(expanded_event._idx); expanded_event = -1;" class="button card-footer-item is-primary">
+                                    <i class="fa fa-envelope fa-fw"></i>Start Conversation
+                                </button>
                                 <button @click = "expanded_event = -1" class="button">Close</button>
                             </footer>
                         </div>
