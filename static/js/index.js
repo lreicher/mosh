@@ -201,12 +201,41 @@ let init = (app) => {
 
     app.stop_edit = function (event_idx, fn) {
         let event = app.vue.events[event_idx];
+        let event_exist_vcall = -1;
+        let event_exist_vcattending = -1;
+        let event_exist_vcfeed = -1;
+        let event_exist_vchosting = -1;
+
         if (event._state[fn] === 'edit') {
             if (event._server_vals[fn] !== event[fn]) {
                 event._state[fn] = "pending";
                 axios.post(edit_event_url, {
                     id: event.id, field: fn, value: event[fn]
                 }).then(function (result) {
+                    event_exist_vcall = app.vue.vcall.findIndex(x=>x.key === event.id);
+                    event_exist_vcattending = app.vue.vcattending.findIndex(x=>x.key === event.id);
+                    event_exist_vcfeed= app.vue.vcfeed.findIndex(x=>x.key === event.id);
+                    event_exist_vchosting = app.vue.vchosting.findIndex(x=>x.key ===event.id);
+
+                    if(event_exist_vcattending != -1){
+                        app.calendar_delet_event(event.id,app.vue.vcattending);
+                        app.calendar_add_event(event,app.vue.vcattending,String(app.data.vcolor['attending']));
+                        app.calendar_delet_event(event.id,app.vue.vcall);
+                        app.calendar_add_event(event,app.vue.vcattending,String(app.data.vcolor['attending']));
+                    }
+                    if(event_exist_vcfeed != -1){
+                        app.calendar_delet_event(event.id,app.vue.vcfeed);
+                        app.calendar_add_event(event,app.vue.vcfeed,String(app.data.vcolor['feed']));
+                        app.calendar_delet_event(event.id,app.vue.vcall);
+                        app.calendar_add_event(event,app.vue.vcattending,String(app.data.vcolor['feed']));
+                    }
+                    if(event_exist_vchosting != -1){
+                        app.calendar_delet_event(event.id,app.vue.vchosting);
+                        app.calendar_add_event(event,app.vue.vchosting,String(app.data.vcolor['hosting']));
+                        app.calendar_delet_event(event.id,app.vue.vcall);
+                        app.calendar_add_event(event,app.vue.vcall,String(app.data.vcolor['hosting']));
+                    }
+
                     event._state[fn] = "clean";
                     event._server_vals[fn] = event[fn];
                 })
@@ -225,7 +254,7 @@ let init = (app) => {
         event.attending = !event.attending;
         axios.post(set_attending_url, {event_id: event.id, status: event.attending});
         if(event.attending){
-            //onsole.log(String(app.data.vcolor['attending']));
+            //console.log(String(app.data.vcolor['attending']));
             app.calendar_add_event(event,app.vue.vcattending,String(app.data.vcolor['attending']));
             app.calendar_add_event(event,app.vue.vcall,String(app.data.vcolor['attending']));
         }
