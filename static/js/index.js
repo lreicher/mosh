@@ -153,6 +153,7 @@ let init = (app) => {
                 });
                 let vcevent = response.data.event;
                 console.log(vcevent);
+                // Hosting Calendar
                 app.calendar_add_event(vcevent,app.vue.vchosting,String(app.data.vcolor['hosting']));
                 app.calendar_add_event(vcevent,app.vue.vcall,String(app.data.vcolor['hosting']));
                 app.enumerate(app.vue.events);
@@ -219,22 +220,26 @@ let init = (app) => {
 
                     if(event_exist_vcfeed != -1){
                         app.calendar_delet_event(event.id,app.vue.vcfeed)
+                        app.calendar_delet_event(event.id,app.vue.vcall)
+
                         app.calendar_add_event(event,app.vue.vcfeed,String(app.data.vcolor['feed']));
-                        app.calendar_delet_event(event.id,app.vue.vcall);
-                        app.calendar_add_event(event,app.vue.vcattending,String(app.data.vcolor['feed']));
+                        app.calendar_add_event(event,app.vue.vcall,String(app.data.vcolor['feed']));
                     }
 
                     if(event_exist_vcattending != -1){
                         app.calendar_delet_event(event.id,app.vue.vcattending);
+                        app.calendar_delet_event(event.id,app.vue.vcall)
+
                         app.calendar_add_event(event,app.vue.vcattending,String(app.data.vcolor['attending']));
-                        app.calendar_delet_event(event.id,app.vue.vcall);
-                        app.calendar_add_event(event,app.vue.vcattending,String(app.data.vcolor['attending']));
+                        app.calendar_add_event(event,app.vue.vcall,String(app.data.vcolor['attending']));
                     }
 
                     if(event_exist_vchosting != -1){
+                        // Hosting Calendar
                         app.calendar_delet_event(event.id,app.vue.vchosting);
+                        app.calendar_delet_event(event.id,app.vue.vcall)
+
                         app.calendar_add_event(event,app.vue.vchosting,String(app.data.vcolor['hosting']));
-                        app.calendar_delet_event(event.id,app.vue.vcall);
                         app.calendar_add_event(event,app.vue.vcall,String(app.data.vcolor['hosting']));
                     }
 
@@ -256,23 +261,20 @@ let init = (app) => {
         let event = app.vue.events[event_idx];
         event.attending = !event.attending;
         axios.post(set_attending_url, {event_id: event.id, status: event.attending});
-        if(event.attending){
-            //console.log(String(app.data.vcolor['attending']));
-            event_exist_vchosting = app.vue.vchosting.findIndex(x=>x.key === event.id);
-            app.calendar_add_event(event,app.vue.vcattending,String(app.data.vcolor['attending']));
-            // CHeck if hosting in all 
-            if( event_exist_vchosting == -1){
-                app.vue.calendar_add_event(event,app.vue.vcall,String(app.data.vcolor['attending']));
-            }
-        }
-        else{
-            app.calendar_delet_event(event.id,app.vue.vcattending);
-            event_vcall_color = app.vue.vcall.findIndex(x=>x.key === event.id);
-            color = app.vue.vcall[event_vcall_color].bar;
-            if (String(app.data.vcolor['hosting']) != String(color)){
+        if (event.created_by != app.vue.user_email) {
+            if(event.attending){
+                //console.log(String(app.data.vcolor['attending']));
+                app.calendar_delet_event(event.id,app.vue.vcfeed);
                 app.calendar_delet_event(event.id,app.vue.vcall);
+                app.calendar_add_event(event,app.vue.vcattending,String(app.data.vcolor['attending']));
+                app.calendar_add_event(event,app.vue.vcall,String(app.data.vcolor['attending']));
             }
-
+            else{
+                app.calendar_delet_event(event.id,app.vue.vcattending);
+                app.calendar_delet_event(event.id,app.vue.vcall);
+                app.calendar_add_event(event,app.vue.vcfeed,String(app.data.vcolor['feed']));
+                app.calendar_add_event(event,app.vue.vcall,String(app.data.vcolor['feed']));
+            }
         }
     };
 
@@ -377,7 +379,7 @@ let init = (app) => {
             let ampm = 'AM';
             if (hour > 12 ){
                 hour = hour - 12;
-                ampm = 'PM'
+                ampm = 'PM';
             }
             time_lable = String(hour)+":"+String(Number(list_time[1]))+String(ampm);
         }
@@ -453,27 +455,25 @@ let init = (app) => {
         }).then(() => {
             for (let event of app.vue.events) {
                 let event_exist_vchosting = -1;
-                if (event.created_by === app.vue.user_email) {
-                    app.vue.calendar_add_event(event,app.vue.vchosting,String(app.data.vcolor['hosting']));
-                    app.vue.calendar_add_event(event,app.vue.vcall,String(app.data.vcolor['hosting']));
-                }
-                else{
-                    event_exist_vchosting = app.vue.vchosting.findIndex(x=>x.key === event.id);
-                    app.vue.calendar_add_event(event,app.vue.vcfeed,String(app.data.vcolor['feed']));
-                    if( event_exist_vchosting == -1){
-                        app.vue.calendar_add_event(event,app.vue.vcall,String(app.data.vcolor['feed']));
-                    }
-                }
                 for (let attend of app.vue.attending) {
                     if (event.id === attend.event_id && attend.attending === true) {
                         event.attending = true;
-                        event_exist_vchosting = app.vue.vchosting.findIndex(x=>x.key === event.id);
-                        app.vue.calendar_add_event(event,app.vue.vcattending,String(app.data.vcolor['attending']));
-                        // Check Hosting
-                        if( event_exist_vchosting == -1){
-                            app.vue.calendar_add_event(event,app.vue.vcall,String(app.data.vcolor['attending']));
+                        if (event.created_by != app.vue.user_email) {
+                            app.vue.calendar_add_event(event,app.vue.vcattending,String(app.data.vcolor['attending']));
+                            app.calendar_add_event(event,app.vue.vcall,String(app.data.vcolor['attending']));
                         }
                         break;
+                    }
+                }
+                // Hosting Calendar
+                if (event.created_by === app.vue.user_email) {
+                    app.vue.calendar_add_event(event,app.vue.vchosting,String(app.data.vcolor['hosting']));
+                    app.calendar_add_event(event,app.vue.vcall,String(app.data.vcolor['hosting']));
+                }
+                else{
+                    if(!(event['attending'])){
+                        app.vue.calendar_add_event(event,app.vue.vcfeed,String(app.data.vcolor['feed']));
+                        app.calendar_add_event(event,app.vue.vcall,String(app.data.vcolor['feed']));
                     }
                 }
             }
