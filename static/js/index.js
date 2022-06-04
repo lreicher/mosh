@@ -114,7 +114,7 @@ let init = (app) => {
                         alcohol: "clean", marijuana: "clean"},
             }).then(function (response) {
                 console.log(response)
-                app.vue.events.push({
+                app.vue.events.unshift({
                     id: response.data.event.id,
                     host: app.vue.new_event_host,
                     event_name: app.vue.new_event_name,
