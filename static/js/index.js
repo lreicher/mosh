@@ -29,6 +29,8 @@ let init = (app) => {
         new_event_marijuana: "",
         open_conversation: -1,
         expanded_event: -1,
+        open_profile: 0,
+        host_name: "", 
         add_message: "",
         vcattending: [ 
             {
@@ -357,6 +359,13 @@ let init = (app) => {
         app.vue.expanded_event=event;
     };
 
+    app.host_profile = function (host_email) {
+        app.vue.open_profile = 1
+        axios.get(open_profile_url, {params: {host_email: host_email}}).then(function (response) {
+            app.vue.host_name = response.data.name;
+        });
+    }
+
     // Calendar Functions
     app.calendar_add_event = function(event,vcalendar,color) {
         // parse the date
@@ -428,7 +437,8 @@ let init = (app) => {
         upload_file: app.upload_file,
         calendar_add_event: app.calendar_add_event,
         calendar_delet_event: app.calendar_delet_event,
-        expand_event: app.expand_event
+        expand_event: app.expand_event,
+        host_profile: app.host_profile,
     };
 
     // This creates the Vue instance.

@@ -157,7 +157,7 @@
                     <div class="field">
                         <label class="label">Who's Hosting?</label>
                         <div class="control">
-                            <input class = "input" v-model="new_event_host" placeholder="Ex. Sammy Sluggerson III"/>
+                            <input class = "input" v-model="new_event_host" placeholder="Ex. Sammy Sluggerson III or TKE"/>
                         </div>
                     </div>
                     <div class="field">
@@ -228,7 +228,7 @@
                         </div> 
                         <div class="column">
                             <div class="field">
-                            <label class="label">Marijuana<label>
+                            <label class="label">Herbs<label>
                                 <div class="control">
                                     <div class = "select"> <!-- NEED TO ADD THIS TO MODELS AND CONTROLLERS AND INDEX.js-->
                                         <select v-model="new_event_marijuana">
@@ -269,7 +269,6 @@
                             <img v-if="e.image" width="50" :src="e.image" />
                         </div>
 
-                        
                     </div>
                     </div>
                     <div class="field">
@@ -304,7 +303,6 @@
                                 <div v-for="e in events">
                                     <img v-if="e.image" width="50" :src="e.image" />
                                 </div>
-
                             </figure>
                         </div>
                         <div class="card-content">
@@ -334,6 +332,15 @@
                                     </div>
 
                                     <div class="column">
+                                        <span >
+                                            <div class="icon-text" @click = "host_profile(e.created_by)">
+                                                <span class="icon has-text-warning">
+                                                    <i class="fa fa-solid fa-user" aria-hidden="true"></i>
+                                                </span>
+                                                <span><b>Hosted by:</b></span>
+                                            </div>
+                                            <p class="block">{{e.host}}</p>
+                                        </span>
                                         <div class="icon-text">
                                             <span class="icon has-text-warning">
                                                 <i class="fa fa-glass" aria-hidden="true"></i>
@@ -460,7 +467,7 @@
                         </div>
                         <div class="card-image">
                             <figure class="image">
-                                <!-- TODO Add something here for images -->                                
+                                <!-- TODO Add something here for images -->
                             </figure>
                         </div>
                         <div class="modal-card-body">
@@ -527,6 +534,38 @@
                 </div>
             </div>
 
+            <!-- HOST PROFILE MODAL -->
+            <div v-if="open_profile !== 0" class="modal is-active">
+                <div class="modal-background"></div>
+                    <div class="modal-card">
+                        <div class="modal-card-head">
+                            <div class="card-header-title">Event Host: {{host_name}}</div>
+                            <div class="card-header-icon">
+                                <div class="icon-text">
+                                    <span class="icon has-text-warning">
+                                        <i class="fa fa-user" aria-hidden="true"></i>
+                                    </span>
+                                    
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="modal-card-body">
+                            <div class="content">
+                                <div class="columns">
+                                    
+                            </div>
+
+                            <footer class="modal-card-foot">
+                                <button @click = "open_profile = 0" class="button">Close</button>
+                            </footer>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+
+
 
         </div>
     </div>
@@ -555,6 +594,7 @@
   let start_conversation_url = "[[=XML(start_conversation_url)]]";
   let my_callback_url = "[[=XML(my_callback_url)]]";
   let upload_image_url = "[[=XML(upload_image_url)]]";
+  let open_profile_url = "[[=XML(open_profile_url)]]"
 </script>
 <script src="js/index.js"></script>
 [[end]]

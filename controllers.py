@@ -60,6 +60,7 @@ def index():
         start_conversation_url=URL('start_conversation', signer=url_signer),
         my_callback_url = URL('my_callback', signer=url_signer),
         upload_image_url = URL('upload_image', signer=url_signer),
+        open_profile_url = URL('open_profile', signer=url_signer)
     )
 
 @action('load_feed')
@@ -258,3 +259,13 @@ def upload_image():
     image = request.json.get("image")
     db(db.event.id == event_id).update(image=image)
     return "ok"
+
+@action('open_profile')
+@action.uses(url_signer.verify(), db, auth.user)
+def open_profile():
+    host_email = request.params.get('host_email')
+    user = db(db.auth_user.email == host_email).select().first()
+    # GET MORE INFO HERE LIKE BIO AND STAR RATING
+    name = user.first_name + " " + user.last_name
+
+    return dict(name = name)
