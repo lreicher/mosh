@@ -34,6 +34,7 @@ let init = (app) => {
         add_message: "",
         saved_event: -1,
         all_event: -1,
+        todays_date: "",
         vcattending: [ 
             {
                 key: -1,
@@ -405,7 +406,6 @@ let init = (app) => {
             time_lable = String(hour)+":"+String(Number(list_time[1]))+String(ampm);
         }
 
-
         // add to calendar
         vcalendar.push(
             {
@@ -413,8 +413,8 @@ let init = (app) => {
                 bar: color,   
                 dates: new Date(year, month , day),
                 popover: {
-                    label: "Event name: "+String(event.event_name)+'\n'+
-                            "Time: "+time_lable,
+                    label: String(event.event_name)+'\n'+
+                            "at "+time_lable,
                     isInteractive: true,
                     transition: 'fade',
                     visibility: 'hover',
@@ -430,6 +430,12 @@ let init = (app) => {
         if(index_delet_event != -1){
             vcalendar.splice(index_delet_event,1);
         }
+    };
+
+    app.get_date = function () {
+        axios.get(todays_date_url).then(function (response) {
+            app.vue.todays_date = response.data.todays_date;
+        });
     };
 
     // This contains all the methods.
@@ -453,6 +459,7 @@ let init = (app) => {
         host_profile: app.host_profile,
         saved_events: app.saved_events,
         all_events: app.all_events,
+        get_date: app.get_date,
     };
 
     // This creates the Vue instance.
@@ -477,6 +484,7 @@ let init = (app) => {
             app.upload_file = response.data.upload_file;
 
         }).then(() => {
+            app.get_date()
             for (let event of app.vue.events) {
                 let event_exist_vchosting = -1;
                 for (let attend of app.vue.attending) {

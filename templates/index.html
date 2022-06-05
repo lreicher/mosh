@@ -96,6 +96,9 @@
                                 <span v-else><b>${{e.price}}</b></span>
                             </div>
                         </div>
+                        <button v-if="e.date === todays_date" @click="start_conversation(e._idx)" class="button is-warning">
+                            <i class="fa fa-exclamation-triangle fa-fw"></i>Cop Alert
+                        </button>
                         <div class="card-image">
                             <!--Event photo goes here-->
                         </div>
@@ -625,7 +628,8 @@
   let start_conversation_url = "[[=XML(start_conversation_url)]]";
   let my_callback_url = "[[=XML(my_callback_url)]]";
   let upload_image_url = "[[=XML(upload_image_url)]]";
-  let open_profile_url = "[[=XML(open_profile_url)]]"
+  let open_profile_url = "[[=XML(open_profile_url)]]";
+  let todays_date_url = "[[=XML(todays_date_url)]]"
 </script>
 <script src="js/index.js"></script>
 [[end]]
