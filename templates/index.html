@@ -21,9 +21,17 @@
 
     <!-- MyEvents Page -->
     <div v-if="view_myevents" class="container">
-        <div class="columns">
-            <div class="column is-three-quarters">
-                <table class="table is-striped is-halfwidth">
+        <div class="rows">
+            <div class="row">
+                <v-calendar 
+                    :attributes='vchosting'
+                    :min-date="new Date()"
+                    is-expanded
+                >
+                </v-calendar>
+            </div>
+            <div class="row">
+                <table class="table is-striped is-hoverable is-fullwidth">
                     <tr>
                         <th>Host</th>
                         <th>Event Name</th>
@@ -33,9 +41,6 @@
                         <th>Date</th>
                         <th>Time</th>
                         <th>Creation Date</th>
-                        <th></th>
-                        <th></th>
-                        <th></th>
                     </tr>
                     <template v-for="e in events">
                         <tr v-if="e.created_by === user_email">
@@ -51,14 +56,12 @@
                                     />
                                 </div>
                             </td>
-                            <td>{{e.creation_date}}
-                                <!-- <button class="button is-primary">
-                                    <i class="fa fa-pencil fa-fw"></i>Edit Event
-                                </button> -->
-                                <button @click="delete_event(e._idx)" class="button is-danger">
+                            <td>{{e.creation_date}}</td>
+                            <td>
+                                <button @click="delete_event(e._idx)" class="button is-danger is-right is-small is-fullwidth">
                                     <i class="fa fa-pencil fa-fw"></i>Delete Event
                                 </button>
-                                <button class="button is-primary">
+                                <button class="button is-primary is-right is-small is-fullwidth">
                                     <i class="fa fa-users fa-fw"></i>View Attendees
                                 </button>
                             </td>
@@ -66,43 +69,21 @@
                     </template>
                 </table>
             </div>
-            <div class="column is-one-quarter">
-                <!-- <div class="section" id="vue-target"> -->
-                    {{'attending'}}  
-                    <v-calendar 
-                        :attributes='vcattending'
-                        :min-date="new Date()"
-                    >
-                    </v-calendar>
-                    <v-calendar 
-                        :attributes='vchosting'
-                        :min-date="new Date()"
-                    >
-                    </v-calendar>
-                    {{'hosting'}}  
-                    <v-calendar 
-                        :attributes='vcfeed'
-                        :min-date="new Date()"
-                    >
-                    </v-calendar>
-                    {{'feed'}}
-                    <v-calendar 
-                        :attributes='vcall'
-                        :min-date="new Date()"
-                    >
-                    </v-calendar>
-                    {{'all'}}
-                <!--</div>-->
-            </div>
         </div>
     </div>
 
     <!-- Main Feed -->
     <div v-else class="columns block mt-3">
+
+        <!-- Saved Events Column -->
         <div class="column is-3">
             <div class="box">
-                <!-- SAVED PARTIES COLUMN -->
-                <h2 class="subtitle">Saved Parties</h2>
+                <h2 class="subtitle">Saved Events</h2>
+                <div class="buttons">
+                    <button @click="saved_events(true)" class="button is-fullwidth is-info is-light">
+                        <i class="fa fa-calendar fa-fw"></i> Saved Events Calendar
+                    </button>
+                </div>
                 <div v-for="e in events">
                     <div v-if="e.attending === true" class="card mb-3">
                         <div class="card-header">
@@ -146,12 +127,14 @@
                         </div>
                     </div>
                 </div>
-          </div>
+            </div>
         </div>
-        <!-- Center Column (feed or add-event form)-->
+
+        <!-- Feed / Add Event Column -->
         <div class="column is-6 box">
+
+            <!-- Add Event -->
             <div v-if="add_status">
-                
                 <h2 class="title">Let's get some details about your event!</h2>
                 <div class = "field">
                     <div class="field">
@@ -187,7 +170,7 @@
                     <div class="field">
                         <label class="label">Event Date<label>
                         <div class="control">
-                            <input class = "input" type="date" onfocus="this.min=new Date().toISOString().split('T')[0]" v-model="new_event_date"/>
+                            <input class = "input" type="date" onfocus="this.min=new Date().toLocaleDateString('en-ca')" v-model="new_event_date"/>
                         </div>
                     </div>
                     <div class="field">
@@ -210,10 +193,8 @@
                     </div>
                     <label class="label">Substances:</label>
                     <div class="columns">
-                        
                         <div class="column">
                             <div class="field">
-                                
                                 <label class="label">Alcohol<label>
                                 <div class="control">
                                     <div class = "select"> <!-- NEED TO ADD THIS TO MODELS AND CONTROLLERS AND INDEX.js-->
@@ -241,13 +222,9 @@
                             </div>
                         </div>
                     </div>
-                
-                   
                     <!--Event picture upload-->
                     <div class="control">
                         Insert Pictures of the Event:
-
-
                         <div v-for="e in events">
                             <div v-if="!e.image">
                                 <p class="control">
@@ -265,22 +242,26 @@
                                 </div>                                        
                                 </p>
                             </div>
-                            
                             <img v-if="e.image" width="50" :src="e.image" />
                         </div>
-
                     </div>
+                </div>
+                <div class="field">
+                    <div class="control">
+                        <input type="submit" @click="add_event" value="Post" class="button is-primary">
+                        <input type="submit" @click="set_add_status(false)" value="Cancel" class="button is-warning">
                     </div>
-                    <div class="field">
-                        <div class="control">
-                            <input type="submit" @click="add_event" value="Post" class="button is-primary">
-                            <input type="submit" @click="set_add_status(false)" value="Cancel" class="button is-warning">
-                        </div>
-                    </div>
+                </div>
             </div>
 
+            <!-- FEED -->
             <div v-else>
                 <h2 class="subtitle">New Events</h2>
+                <div class="buttons">
+                    <button @click="all_events(true)" class="button is-fullwidth is-warning is-light">
+                        <i class="fa fa-calendar fa-fw"></i> All Events Calendar
+                    </button>
+                </div>
                 <div class="section pt-0 container">
                     <div v-for="e in events" class="card mb-3">
                         <div class="card-header">
@@ -299,7 +280,6 @@
                             <figure class="image">
                                 <!-- TODO Add something here for images -->
                                 <!-- <img src="mosh_logo.png" alt="Placeholder image"> -->
-
                                 <div v-for="e in events">
                                     <img v-if="e.image" width="50" :src="e.image" />
                                 </div>
@@ -330,7 +310,6 @@
                                             <span><b>{{e.time_guidelines}}</b></span>
                                         </div>
                                     </div>
-
                                     <div class="column">
                                         <span >
                                             <div class="icon-text" @click = "host_profile(e.created_by)">
@@ -375,23 +354,24 @@
                 </div>
             </div>
         </div>
+
+        <!-- Messages Column -->
         <div class="column is-3 box">
             <h2 class="subtitle">Messages</h2>
             <div v-for="c in conversations" class="block mb-1 py-1" > <!-- Begin message card-->
-              <div @click="load_conversation(c._idx)" class="box is-clickable is-capitalized"> <!--PUT @CLICK HERE FOR OPEN CONVO METHOD -->
+                <div @click="load_conversation(c._idx)" class="box is-clickable is-capitalized"> <!--PUT @CLICK HERE FOR OPEN CONVO METHOD -->
                 <!-- recipient name, depending on whether user is the host or not -->
-                      <span v-if="c.host_email == user_email">
-                          {{c.user_name}}
-                           - {{c.event_name}}
-                      </span>
-                      <span v-else>
-                          {{c.host_name}}
-                           - {{c.event_name}}
-                      </span>
-              </div>
+                    <span v-if="c.host_email == user_email">
+                        {{c.user_name}}
+                        - {{c.event_name}}
+                    </span>
+                    <span v-else>
+                        {{c.host_name}}
+                        - {{c.event_name}}
+                    </span>
+                </div>
             </div>
-
-            <!-- OPEN CONVO MODAL -->
+            <!-- Open Convo Modal -->
             <div v-if="open_conversation !== -1" class="modal is-active">
                 <div class="modal-background"></div>
                 <div class="modal-card">
@@ -402,7 +382,6 @@
                         <span v-else>
                             <p class="modal-card-title is-capitalized">Message With {{open_conversation.host_name}}</p>
                         </span>
-                        
                     </header>
                     <section class="modal-card-body">
                         <!-- Display messages -->
@@ -427,8 +406,6 @@
                                 </div>
                             </div>
                         </span>
-
-                        
                     </section>
                     <footer class="modal-card-foot">
                         <div class = "form">
@@ -444,12 +421,11 @@
                                 </div>
                             </div>
                         </div>
-                        
                     </footer>
                 </div>
             </div>
 
-            <!-- EXPAND EVENT MODAL-->
+            <!-- EXPAND EVENT MODAL -->
             <div v-if="expanded_event !== -1" class="modal is-active">
                 <div class="modal-background"></div>
                     <div class="modal-card">
@@ -495,7 +471,6 @@
                                             <span><b>{{expanded_event.time_guidelines}}</b></span>
                                         </div>
                                     </div>
-
                                     <div class="column">
                                         <div class="icon-text">
                                             <span class="icon has-text-warning">
@@ -530,46 +505,102 @@
                             </footer>
                         </div>
                     </div>
-                    
                 </div>
             </div>
 
             <!-- HOST PROFILE MODAL -->
             <div v-if="open_profile !== 0" class="modal is-active">
                 <div class="modal-background"></div>
-                    <div class="modal-card">
-                        <div class="modal-card-head">
-                            <div class="card-header-title">Event Host: {{host_name}}</div>
-                            <div class="card-header-icon">
-                                <div class="icon-text">
-                                    <span class="icon has-text-warning">
-                                        <i class="fa fa-user" aria-hidden="true"></i>
-                                    </span>
-                                    
-                                </div>
+                <div class="modal-card">
+                    <div class="modal-card-head">
+                        <div class="card-header-title">Event Host: {{host_name}}</div>
+                        <div class="card-header-icon">
+                            <div class="icon-text">
+                                <span class="icon has-text-warning">
+                                    <i class="fa fa-user" aria-hidden="true"></i>
+                                </span>
                             </div>
                         </div>
-                        
-                        <div class="modal-card-body">
-                            <div class="content">
-                                <div class="columns">
-                                    
+                    </div>
+                    <div class="modal-card-body">
+                        <div class="content">
+                            <div class="columns">
+                                <!-- Stuff -->
                             </div>
-
                             <footer class="modal-card-foot">
                                 <button @click = "open_profile = 0" class="button">Close</button>
                             </footer>
                         </div>
                     </div>
-                    
                 </div>
             </div>
 
+            <!-- SAVED EVENTS MODAL-->
+            <div v-if="saved_event !== -1" class="modal is-active">
+                <div class="modal-background"></div>
+                <div class="modal-card">
+                    <div class="modal-card-head">
+                        <div class="card-header-title">Saved Events</div>
+                        <div class="card-header-icon">
+                            <div class="icon-text">
+                                <span class="icon has-text-warning">
+                                    <i class="fa fa-calendar" aria-hidden="true"></i>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-card-body">
+                        <div class="content">
+                            <div class="columns">
+                                <v-calendar 
+                                    :attributes='vcattending'
+                                    :min-date="new Date()"
+                                    is-expanded
+                                >
+                                </v-calendar>
+                            </div>
+                            <footer class="modal-card-foot">
+                                <button @click = "saved_event = -1" class="button">Close</button>
+                            </footer>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
+            <!-- ALL EVENTS MODAL-->
+            <div v-if="all_event !== -1" class="modal is-active">
+                <div class="modal-background"></div>
+                <div class="modal-card">
+                    <div class="modal-card-head">
+                        <div class="card-header-title">All Events</div>
+                        <div class="card-header-icon">
+                            <div class="icon-text">
+                                <span class="icon has-text-warning">
+                                    <i class="fa fa-calendar" aria-hidden="true"></i>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-card-body">
+                        <div class="content">
+                            <div class="columns">
+                                <v-calendar 
+                                    :attributes='vcall'
+                                    :min-date="new Date()"
+                                    is-expanded
+                                >
+                                </v-calendar>
+                            </div>
+                            <footer class="modal-card-foot">
+                                <button @click = "all_event = -1" class="button">Close</button>
+                            </footer>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
         </div>
     </div>
-
 </div>
 
 

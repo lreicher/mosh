@@ -32,6 +32,8 @@ let init = (app) => {
         open_profile: 0,
         host_name: "", 
         add_message: "",
+        saved_event: -1,
+        all_event: -1,
         vcattending: [ 
             {
                 key: -1,
@@ -366,6 +368,16 @@ let init = (app) => {
         });
     }
 
+    app.saved_events = function (event_idx) {
+        let event = app.vue.events[event_idx];
+        app.vue.saved_event = event;
+    };
+
+    app.all_events = function (event_idx) {
+        let event = app.vue.events[event_idx];
+        app.vue.all_event = event;
+    };
+
     // Calendar Functions
     app.calendar_add_event = function(event,vcalendar,color) {
         // parse the date
@@ -439,6 +451,8 @@ let init = (app) => {
         calendar_delet_event: app.calendar_delet_event,
         expand_event: app.expand_event,
         host_profile: app.host_profile,
+        saved_events: app.saved_events,
+        all_events: app.all_events,
     };
 
     // This creates the Vue instance.
