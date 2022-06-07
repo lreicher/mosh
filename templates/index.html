@@ -175,7 +175,7 @@
                     <div class="field">
                         <label class="label">Event Date<label>
                         <div class="control">
-                            <input class = "input" type="date" onfocus="this.min=new Date().toLocaleDateString('en-ca')" v-model="new_event_date"/>
+                            <input class = "input" type="date" onfocus="this.min=new Date().toLocaleDateString('en-ca')" v-model="new_event_date" required/>
                         </div>
                     </div>
                     <div class="field">
@@ -187,7 +187,7 @@
                     <div class="field">
                         <label class="label">Time Guidelines<label>
                         <div class="control">
-                            <div class = "select"> <!-- NEED TO ADD THIS TO MODELS AND CONTROLLERS AND INDEX.js-->
+                            <div class = "select"> 
                                 <select v-model="new_event_time_guidelines">
                                     <option>Plan to arrive early</option>
                                     <option>Plan to arrive on time</option>
@@ -202,7 +202,7 @@
                             <div class="field">
                                 <label class="label">Alcohol<label>
                                 <div class="control">
-                                    <div class = "select"> <!-- NEED TO ADD THIS TO MODELS AND CONTROLLERS AND INDEX.js-->
+                                    <div class = "select"> 
                                         <select v-model="new_event_alcohol">
                                             <option>Provided</option>
                                             <option>Welcome/Permitted</option>
@@ -216,7 +216,7 @@
                             <div class="field">
                             <label class="label">Herbs<label>
                                 <div class="control">
-                                    <div class = "select"> <!-- NEED TO ADD THIS TO MODELS AND CONTROLLERS AND INDEX.js-->
+                                    <div class = "select"> 
                                         <select v-model="new_event_marijuana">
                                             <option>Provided</option>
                                             <option>Welcome/Permitted</option>
@@ -309,6 +309,7 @@
                         <i class="fa fa-calendar fa-fw"></i> All Events Calendar
                     </button>
                 </div>
+                <!-- Card item -->
                 <div class="section pt-0 container">
                     <div  v-if="e.date >= todays_date" v-for="e in events" class="card mb-3">
                         <div class="card-header">

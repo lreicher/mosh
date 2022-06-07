@@ -35,6 +35,7 @@ let init = (app) => {
         saved_event: -1,
         all_event: -1,
         todays_date: "",
+        required: "",
 
         selection_done: false,
         uploading: false,

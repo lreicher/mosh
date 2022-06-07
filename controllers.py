@@ -59,10 +59,8 @@ def index():
         load_conversations_url=URL('load_conversations', signer=url_signer),
         start_conversation_url=URL('start_conversation', signer=url_signer),
         my_callback_url = URL('my_callback', signer=url_signer),
-
         upload_image_url = URL('upload_image', signer=url_signer),
         file_upload_url = URL('file_upload', signer=url_signer),
-
         open_profile_url = URL('open_profile', signer=url_signer),
         todays_date_url = URL('todays_date', signer=url_signer)
 
