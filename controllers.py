@@ -279,9 +279,9 @@ def file_upload():
 def open_profile():
     host_email = request.params.get('host_email')
     user = db(db.auth_user.email == host_email).select().first()
-    # GET MORE INFO HERE LIKE BIO AND STAR RATING
     name = user.first_name + " " + user.last_name
-    return dict(name = name)
+    bio = user.bio
+    return dict(name=name, bio=bio)
 
 @action('todays_date')
 @action.uses(url_signer.verify(), db, auth.user)

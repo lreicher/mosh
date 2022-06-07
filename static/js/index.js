@@ -31,6 +31,7 @@ let init = (app) => {
         expanded_event: -1,
         open_profile: 0,
         host_name: "", 
+        host_bio: "",
         add_message: "",
         saved_event: -1,
         all_event: -1,
@@ -431,6 +432,7 @@ let init = (app) => {
         app.vue.open_profile = 1
         axios.get(open_profile_url, {params: {host_email: host_email}}).then(function (response) {
             app.vue.host_name = response.data.name;
+            app.vue.host_bio = response.data.bio;
         });
     }
 

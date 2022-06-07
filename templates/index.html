@@ -7,17 +7,7 @@
 </style>
 
 <div class="section" id="vue-target" v-cloak>
-    <div class="buttons">
-        <button @click="set_add_status(true)" class="button is-primary">
-            <i class="fa fa-plus fa-fw"></i>Add Event
-        </button>
-        <button v-if="!view_myevents" @click="set_view_myevents_status(true)" class="button is-info">
-            <i class="fa fa-book fa-fw"></i>View My Events
-        </button>
-        <button v-else @click="set_view_myevents_status(false)" class="button is-info">
-            <i class="fa fa-globe fa-fw"></i>View All Events
-        </button>
-    </div>
+    
 
     <!-- MyEvents Page -->
     <div v-if="view_myevents" class="container">
@@ -302,8 +292,25 @@
             </div>
 
             <!-- FEED -->
+            
             <div v-else>
-                <h2 class="subtitle">New Events</h2>
+                <div class="columns">
+                    <div class = "column">
+                        <h2 class="subtitle">New Events</h2>
+                            <div class="buttons is-pulled-right">
+                                <button @click="set_add_status(true)" class="button is-primary">
+                                    <i class="fa fa-plus fa-fw"></i>Add Event
+                                </button>
+                                <button v-if="!view_myevents" @click="set_view_myevents_status(true)" class="button is-info">
+                                    <i class="fa fa-book fa-fw"></i>View My Events
+                                </button>
+                                <button v-else @click="set_view_myevents_status(false)" class="button is-info">
+                                    <i class="fa fa-globe fa-fw"></i>View All Events
+                                </button>
+                            </div>
+                    </div>
+                </div>
+                
                 <div class="buttons">
                     <button @click="all_events(true)" class="button is-fullwidth is-warning is-light">
                         <i class="fa fa-calendar fa-fw"></i> All Events Calendar
@@ -412,11 +419,11 @@
                 <!-- recipient name, depending on whether user is the host or not -->
                     <span v-if="c.host_email == user_email">
                         {{c.user_name}}
-                        - {{c.event_name}}
+                        <p class="p has-text-grey-light"> {{c.event_name}}</p>
                     </span>
                     <span v-else>
                         {{c.host_name}}
-                        - {{c.event_name}}
+                        <p class="p has-text-grey-light"> {{c.event_name}}</p>
                     </span>
                 </div>
             </div>
@@ -521,6 +528,15 @@
                                         </div>
                                     </div>
                                     <div class="column">
+                                        <span >
+                                            <div class="icon-text" @click = "host_profile(expanded_event.created_by)">
+                                                <span class="icon has-text-warning">
+                                                    <i class="fa fa-solid fa-user" aria-hidden="true"></i>
+                                                </span>
+                                                <span><b>Hosted by:</b></span>
+                                            </div>
+                                            <p class="block">{{expanded_event.host}}</p>
+                                        </span>
                                         <div class="icon-text">
                                             <span class="icon has-text-warning">
                                                 <i class="fa fa-glass" aria-hidden="true"></i>
@@ -575,6 +591,7 @@
                         <div class="content">
                             <div class="columns">
                                 <!-- Stuff -->
+                                {{host_bio}}
                             </div>
                             <footer class="modal-card-foot">
                                 <button @click = "open_profile = 0" class="button">Close</button>
