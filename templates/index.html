@@ -84,7 +84,7 @@
                         <i class="fa fa-calendar fa-fw"></i> Saved Events Calendar
                     </button>
                 </div>
-                <div v-for="e in events">
+                <div  v-if="e.date >= todays_date" v-for="e in events">
                     <div v-if="e.attending === true" class="card mb-3">
                         <div class="card-header">
                             <div class="card-header-title">{{e.event_name}}</div>
@@ -310,7 +310,7 @@
                     </button>
                 </div>
                 <div class="section pt-0 container">
-                    <div v-for="e in events" class="card mb-3">
+                    <div  v-if="e.date >= todays_date" v-for="e in events" class="card mb-3">
                         <div class="card-header">
                             <div class="card-header-title">{{e.event_name}}</div>
                             <div class="card-header-icon">
