@@ -11,6 +11,9 @@
 
     <!-- MyEvents Page -->
     <div v-if="view_myevents" class="container">
+        <button @click="set_view_myevents_status(false)" class="button is-info">
+            <i class="fa fa-arrow-left"></i> Back
+        </button>
         <div class="rows">
             <div class="row">
                 <v-calendar 
