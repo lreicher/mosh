@@ -127,18 +127,19 @@ def delete():
     db(db.event.id == event_id).delete()
     return "ok"
 
-@action('attendees/<event_id:int>')
-@action.uses('attendees.html', db, session, auth.user)
-def attendees(event_id=None):
+@action('attendees', method="GET")
+@action.uses(url_signer.verify(), db, session, auth.user)
+def attendees():
+    event_id = request.params.get('event_id')
     assert event_id is not None
     event = db.event[event_id]
-    if event is None or not (event.created_by == get_user_email()):
-        redirect(URL('index'))
-    rows = db(
+    assert event is not None or not (event.created_by == get_user_email())
+    attendees_list = db(
         (db.attendees.event_id == event_id) &
-        (db.auth_user.id == db.attendees.user_id)
+        (db.auth_user.id == db.attendees.user_id) &
+        (db.attendees.attending == True)
     ).select(db.auth_user.first_name, db.auth_user.last_name)
-    return dict(rows=rows, event=event)
+    return dict(attendees_list=attendees_list)
 
 @action('attend', method="POST")
 @action.uses(url_signer.verify(), db, session, auth.user)

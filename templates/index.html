@@ -51,10 +51,16 @@
                                 <button @click="delete_event(e._idx)" class="button is-danger is-right is-small is-fullwidth">
                                     <i class="fa fa-pencil fa-fw"></i>Delete Event
                                 </button>
-                                <button class="button is-primary is-right is-small is-fullwidth">
+                                <button @click="load_attendees(e._idx)" class="button is-primary is-right is-small is-fullwidth">
                                     <i class="fa fa-users fa-fw"></i>View Attendees
                                 </button>
                             </td>
+                            <tr v-if="e.show_attendees === true">
+                                <th>Attendees</th>
+                            </tr>
+                            <tr v-if="e.show_attendees">
+                                <td v-for="a in e.attendees">{{a.first_name}} {{a.last_name}}</td>
+                            </tr>
                         </tr>
                     </template>
                 </table>
@@ -63,8 +69,7 @@
     </div>
 
     <!-- Main Feed -->
-    <div v-else class="columns block mt-3">
-
+    <div v-else class="columns block">
         <!-- Saved Events Column -->
         <div class="column is-3">
             <div class="box">
@@ -117,7 +122,7 @@
                                     </div>
                                 </div>
                                 <button class = "button" @click="expand_event(e._idx)">Details</button>
-                                
+
                             </div>
                         </div>
                     </div>
@@ -126,295 +131,302 @@
         </div>
 
         <!-- Feed / Add Event Column -->
-        <div class="column is-6 box">
-
-            <!-- Add Event -->
-            <div v-if="add_status">
-                <h2 class="title">Let's get some details about your event!</h2>
-                <div class = "field">
-                    <div class="field">
-                        <label class="label">Who's Hosting?</label>
-                        <div class="control">
-                            <input class = "input" v-model="new_event_host" placeholder="Ex. Sammy Sluggerson III or TKE"/>
-                        </div>
-                    </div>
-                    <div class="field">
-                        <label class="label">Event Name<label>
-                        <div class="control">
-                            <input class = "input" v-model="new_event_name" placeholder="Ex. Sammy's Birthday Party"/>
-                        </div>
-                    </div>
-                    <div class="field">
-                        <label class="label">Event Location<label>
-                        <div class="control">
-                            <input class = "input" v-model="new_event_location" placeholder="Ex. Painted Barrels"/>
-                        </div>
-                    </div>
-                    <div class="field">
-                        <label class="label">Event Description<label>
-                        <div class="control">
-                            <textarea class = "textarea" v-model="new_event_description" placeholder="Ex. Come party with Sammy and friends for an awesome night of forest partying. Dress in bright colors and get ready to dance. Music and facepainting will be provided, BYOB!"></textarea>
-                        </div>
-                    </div>
-                    <div class="field">
-                        <label class="label">Event Price<label>
-                        <div class="control">
-                            <input class = "input" type="number" v-model="new_event_price"/>
-                        </div>
-                    </div>
-                    <div class="field">
-                        <label class="label">Event Date<label>
-                        <div class="control">
-                            <input class = "input" type="date" onfocus="this.min=new Date().toLocaleDateString('en-ca')" v-model="new_event_date" required/>
-                        </div>
-                    </div>
-                    <div class="field">
-                        <label class="label">Event Time<label>
-                        <div class="control">
-                            <input class = "input" type="time" v-model="new_event_time"/>     
-                        </div>
-                    </div>
-                    <div class="field">
-                        <label class="label">Time Guidelines<label>
-                        <div class="control">
-                            <div class = "select"> 
-                                <select v-model="new_event_time_guidelines">
-                                    <option>Plan to arrive early</option>
-                                    <option>Plan to arrive on time</option>
-                                    <option>Get there whenever</option>
-                                </select>
+        <div class="column is-6">
+            <div class="box">
+                <!-- Add Event -->
+                <div v-if="add_status">
+                    <h2 class="title">Let's get some details about your event!</h2>
+                    <div class = "field">
+                        <div class="field">
+                            <label class="label">Who's Hosting?</label>
+                            <div class="control">
+                                <input class = "input" v-model="new_event_host" placeholder="Ex. Sammy Sluggerson III or TKE"/>
                             </div>
                         </div>
-                    </div>
-                    <label class="label">Substances:</label>
-                    <div class="columns">
-                        <div class="column">
-                            <div class="field">
-                                <label class="label">Alcohol<label>
-                                <div class="control">
-                                    <div class = "select"> 
-                                        <select v-model="new_event_alcohol">
-                                            <option>Provided</option>
-                                            <option>Welcome/Permitted</option>
-                                            <option>Not Permitted</option>
-                                        </select>
-                                    </div>
-                                </div>
+                        <div class="field">
+                            <label class="label">Event Name<label>
+                            <div class="control">
+                                <input class = "input" v-model="new_event_name" placeholder="Ex. Sammy's Birthday Party"/>
                             </div>
-                        </div> 
-                        <div class="column">
-                            <div class="field">
-                            <label class="label">Herbs<label>
-                                <div class="control">
-                                    <div class = "select"> 
-                                        <select v-model="new_event_marijuana">
-                                            <option>Provided</option>
-                                            <option>Welcome/Permitted</option>
-                                            <option>Not Permitted</option>
-                                        </select>
-                                    </div>
+                        </div>
+                        <div class="field">
+                            <label class="label">Event Location<label>
+                            <div class="control">
+                                <input class = "input" v-model="new_event_location" placeholder="Ex. Painted Barrels"/>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label class="label">Event Description<label>
+                            <div class="control">
+                                <textarea class = "textarea" v-model="new_event_description" placeholder="Ex. Come party with Sammy and friends for an awesome night of forest partying. Dress in bright colors and get ready to dance. Music and facepainting will be provided, BYOB!"></textarea>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label class="label">Event Price<label>
+                            <div class="control">
+                                <input class = "input" type="number" v-model="new_event_price"/>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label class="label">Event Date<label>
+                            <div class="control">
+                                <input class = "input" type="date" onfocus="this.min=new Date().toLocaleDateString('en-ca')" v-model="new_event_date" required/>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label class="label">Event Time<label>
+                            <div class="control">
+                                <input class = "input" type="time" v-model="new_event_time"/>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label class="label">Time Guidelines<label>
+                            <div class="control">
+                                <div class = "select">
+                                    <select v-model="new_event_time_guidelines">
+                                        <option>Plan to arrive early</option>
+                                        <option>Plan to arrive on time</option>
+                                        <option>Get there whenever</option>
+                                    </select>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <!--Event picture upload-->
-                    <!-- <div class="section" id="vue-target" v-cloak> -->
-                        <div v-if="!selection_done" class="field has-addons block">
-                        <p class="control">
-                            <div class="file is-info">
-                            <label class="file-label">
-                                <input class="file-input" type="file"
-                                    accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*"
-                                    @change="select_file($event)">
-                                <span class="file-cta">
-                                <span class="file-label">
-                                    <span><i class="fa fa-upload"></i></span>
-                                </span>
-                                </span>
-                            </label>
+                        <label class="label">Substances:</label>
+                        <div class="columns">
+                            <div class="column">
+                                <div class="field">
+                                    <label class="label">Alcohol<label>
+                                    <div class="control">
+                                        <div class = "select">
+                                            <select v-model="new_event_alcohol">
+                                                <option>Provided</option>
+                                                <option>Welcome/Permitted</option>
+                                                <option>Not Permitted</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                        </p>
+                            <div class="column">
+                                <div class="field">
+                                <label class="label">Herbs<label>
+                                    <div class="control">
+                                        <div class = "select">
+                                            <select v-model="new_event_marijuana">
+                                                <option>Provided</option>
+                                                <option>Welcome/Permitted</option>
+                                                <option>Not Permitted</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <template v-if="selection_done">
-                        <div class="block">
-                            <img width="400" :src="img_url" />
-                        </div>
-                        <!-- <div class="block">
-                            <button class="button is-success" :disabled="uploading" @click="upload_file">
-                            <span class="icon is-small">
-                                <i v-if="!uploading" class="fa fa-upload"></i>
-                                <i v-if="uploading" class="fa fa-spinner fa-pulse fa-fw"></i>
-                            </span>
-                            <span>Post</span>
-                            </button>
-                        </div> -->
-                        </template>
-                    <!-- </div> -->
-
-
-
-
-
-
-                    <!-- <div class="control">
-                        Insert Pictures of the Event:
-                        <div v-for="e in events">
-                            <div v-if="!e.image">
-                                <p class="control">
+                        <!--Event picture upload-->
+                        <!-- <div class="section" id="vue-target" v-cloak> -->
+                            <div v-if="!selection_done" class="field has-addons block">
+                            <p class="control">
                                 <div class="file is-info">
-                                    <label class="file-label">
-                                    <input class="file-input" type="file" 
-                                            accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*" >
-                                            @change="upload_file($event, e._idx)">
-
+                                <label class="file-label">
+                                    <input class="file-input" type="file"
+                                        accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*"
+                                        @change="select_file($event)">
                                     <span class="file-cta">
-                                        <span class="file-label">
+                                    <span class="file-label">
                                         <span><i class="fa fa-upload"></i></span>
+                                    </span>
+                                    </span>
+                                </label>
+                                </div>
+                            </p>
+                            </div>
+                            <template v-if="selection_done">
+                            <div class="block">
+                                <img width="400" :src="img_url" />
+                            </div>
+                            <!-- <div class="block">
+                                <button class="button is-success" :disabled="uploading" @click="upload_file">
+                                <span class="icon is-small">
+                                    <i v-if="!uploading" class="fa fa-upload"></i>
+                                    <i v-if="uploading" class="fa fa-spinner fa-pulse fa-fw"></i>
+                                </span>
+                                <span>Post</span>
+                                </button>
+                            </div> -->
+                            </template>
+                        <!-- </div> -->
+
+
+
+
+
+
+                        <!-- <div class="control">
+                            Insert Pictures of the Event:
+                            <div v-for="e in events">
+                                <div v-if="!e.image">
+                                    <p class="control">
+                                    <div class="file is-info">
+                                        <label class="file-label">
+                                        <input class="file-input" type="file"
+                                                accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*" >
+                                                @change="upload_file($event, e._idx)">
+
+                                        <span class="file-cta">
+                                            <span class="file-label">
+                                            <span><i class="fa fa-upload"></i></span>
+                                            </span>
                                         </span>
-                                    </span>
-                                    
-                                    <img v-if="e.image" width="50" :src="e.image" />
 
-                                    </label>
-                                </div>                                        
-                                </p>
-                            </div>
-                            <img v-if="e.image" width="50" :src="e.image" />
-                        </div>
-                    </div> -->
-                </div>
-                <div class="field">
-                    <div class="control">
-                        <input type="submit" @click="add_event" @click="upload_file" value="Post" class="button is-primary">
-                        <input type="submit" @click="set_add_status(false)" value="Cancel" class="button is-warning">
-                    </div>
-                </div>
-            </div>
+                                        <img v-if="e.image" width="50" :src="e.image" />
 
-            <!-- FEED -->
-            
-            <div v-else>
-                <div class="columns">
-                    <div class = "column">
-                        <h2 class="subtitle">New Events</h2>
-                            <div class="buttons is-pulled-right">
-                                <button @click="set_add_status(true)" class="button is-primary">
-                                    <i class="fa fa-plus fa-fw"></i>Add Event
-                                </button>
-                                <button v-if="!view_myevents" @click="set_view_myevents_status(true)" class="button is-info">
-                                    <i class="fa fa-book fa-fw"></i>View My Events
-                                </button>
-                                <button v-else @click="set_view_myevents_status(false)" class="button is-info">
-                                    <i class="fa fa-globe fa-fw"></i>View All Events
-                                </button>
-                            </div>
-                    </div>
-                </div>
-                
-                <div class="buttons">
-                    <button @click="all_events(true)" class="button is-fullwidth is-warning is-light">
-                        <i class="fa fa-calendar fa-fw"></i> All Events Calendar
-                    </button>
-                </div>
-                <!-- Card item -->
-                <div class="section pt-0 container">
-                    <div  v-if="e.date >= todays_date" v-for="e in events" class="card mb-3">
-                        <div class="card-header">
-                            <div class="card-header-title">{{e.event_name}}</div>
-                            <div class="card-header-icon">
-                                <div class="icon-text">
-                                    <span class="icon has-text-warning">
-                                        <i class="fa fa-ticket" aria-hidden="true"></i>
-                                    </span>
-                                    <span v-if="e.price === 0"><b>Free</b></span>
-                                    <span v-else><b>${{e.price}}</b></span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="card-image">
-                            <figure class="image">
-                                <!-- TODO Add something here for images -->
-                                <!-- <img src="mosh_logo.png" alt="Placeholder image"> -->
-                                <div v-for="e in events">
-                                    <!-- <img v-if="e.image" width="50" :src="e.image" /> -->
-                                    <img width="400" :src="e.img_url" />
-                                </div>
-                            </figure>
-                        </div>
-                        <div class="card-content">
-                            <div class="content">
-                                <div class="columns">
-                                    <div class="column is-three-fifths">
-                                        <div class="icon-text">
-                                            <span class="icon has-text-warning">
-                                                <i class="fa fa-map-marker" aria-hidden="true"></i>
-                                            </span>
-                                            <span><b>Location</b></span>
-                                        </div>
-                                        <p class="block">{{e.location}}</p>
-                                        <div class="icon-text">
-                                            <span class="icon has-text-warning">
-                                                <i class="fa fa-clock-o" aria-hidden="true"></i>
-                                            </span>
-                                            <span><b>When</b></span>
-                                        </div>
-                                        <p class="block">{{e.when}}</p>
-                                        <div class="icon-text">
-                                            <span class="icon has-text-warning">
-                                                <i class="fa fa-asterisk" aria-hidden="true"></i>
-                                            </span>
-                                            <span><b>{{e.time_guidelines}}</b></span>
-                                        </div>
+                                        </label>
                                     </div>
-                                    <div class="column">
-                                        <span >
-                                            <div class="icon-text" @click = "host_profile(e.created_by)">
+                                    </p>
+                                </div>
+                                <img v-if="e.image" width="50" :src="e.image" />
+                            </div>
+                        </div> -->
+                    </div>
+                    <div class="field">
+                        <div class="control">
+                            <input type="submit" @click="add_event" @click="upload_file" value="Post" class="button is-primary">
+                            <input type="submit" @click="set_add_status(false)" value="Cancel" class="button is-warning">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FEED -->
+
+                <div v-else>
+                    <div class="columns">
+                        <div class = "column">
+                            <h2 class="subtitle">New Events</h2>
+                                <div class="buttons is-pulled-right">
+                                    <button @click="set_add_status(true)" class="button is-primary">
+                                        <i class="fa fa-plus fa-fw"></i>Add Event
+                                    </button>
+                                    <button v-if="!view_myevents" @click="set_view_myevents_status(true)" class="button is-info">
+                                        <i class="fa fa-book fa-fw"></i>View My Events
+                                    </button>
+                                    <button v-else @click="set_view_myevents_status(false)" class="button is-info">
+                                        <i class="fa fa-globe fa-fw"></i>View All Events
+                                    </button>
+                                </div>
+                        </div>
+                    </div>
+
+                    <div class="buttons">
+                        <button @click="all_events(true)" class="button is-fullwidth is-warning is-light">
+                            <i class="fa fa-calendar fa-fw"></i> All Events Calendar
+                        </button>
+                    </div>
+                    <!-- Card item -->
+                    <div class="section pt-0 container">
+                        <div  v-if="e.date >= todays_date" v-for="e in events" class="card mb-3">
+                            <div class="card-header">
+                                <div class="card-header-title">{{e.event_name}}</div>
+                                <div class="card-header-icon">
+                                    <div class="icon-text">
+                                        <span class="icon has-text-warning">
+                                            <i class="fa fa-ticket" aria-hidden="true"></i>
+                                        </span>
+                                        <span v-if="e.price === 0"><b>Free</b></span>
+                                        <span v-else><b>${{e.price}}</b></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-image">
+                                <figure class="image">
+                                    <!-- TODO Add something here for images -->
+                                    <!-- <img src="mosh_logo.png" alt="Placeholder image"> -->
+                                    <div v-for="e in events">
+                                        <!-- <img v-if="e.image" width="50" :src="e.image" /> -->
+                                        <img width="400" :src="e.img_url" />
+                                    </div>
+                                </figure>
+                            </div>
+                            <div class="card-content">
+                                <div class="content">
+                                    <div class="columns">
+                                        <div class="column is-three-fifths">
+                                            <div class="icon-text">
                                                 <span class="icon has-text-warning">
-                                                    <i class="fa fa-solid fa-user" aria-hidden="true"></i>
+                                                    <i class="fa fa-map-marker" aria-hidden="true"></i>
                                                 </span>
-                                                <span><b>Hosted by:</b></span>
+                                                <span><b>Location</b></span>
                                             </div>
-                                            <p class="block">{{e.host}}</p>
-                                        </span>
-                                        <div class="icon-text">
-                                            <span class="icon has-text-warning">
-                                                <i class="fa fa-glass" aria-hidden="true"></i>
-                                            </span>
-                                            <span><b>Alcohol</b></span>
+                                            <p class="block">{{e.location}}</p>
+                                            <div class="icon-text">
+                                                <span class="icon has-text-warning">
+                                                    <i class="fa fa-clock-o" aria-hidden="true"></i>
+                                                </span>
+                                                <span><b>When</b></span>
+                                            </div>
+                                            <p class="block">{{e.when}}</p>
+                                            <div class="icon-text">
+                                                <span class="icon has-text-warning">
+                                                    <i class="fa fa-asterisk" aria-hidden="true"></i>
+                                                </span>
+                                                <span><b>{{e.time_guidelines}}</b></span>
+                                            </div>
                                         </div>
-                                        <p class="block">{{e.alcohol}}</p>
-                                        <div class="icon-text">
-                                            <span class="icon has-text-warning">
-                                                <i class="fa fa-leaf" aria-hidden="true"></i>
+                                        <div class="column">
+                                            <span >
+                                                <div class="icon-text" @click = "host_profile(e.created_by)">
+                                                    <span class="icon has-text-warning">
+                                                        <i class="fa fa-solid fa-user" aria-hidden="true"></i>
+                                                    </span>
+                                                    <span><b>Hosted by:</b></span>
+                                                </div>
+                                                <p class="block">{{e.host}}</p>
                                             </span>
-                                            <span><b>Herbs</b></span>
+                                            <div class="icon-text">
+                                                <span class="icon has-text-warning">
+                                                    <i class="fa fa-glass" aria-hidden="true"></i>
+                                                </span>
+                                                <span><b>Alcohol</b></span>
+                                            </div>
+                                            <p class="block">{{e.alcohol}}</p>
+                                            <div class="icon-text">
+                                                <span class="icon has-text-warning">
+                                                    <i class="fa fa-leaf" aria-hidden="true"></i>
+                                                </span>
+                                                <span><b>Herbs</b></span>
+                                            </div>
+                                            <p class="block">{{e.marijuana}}</p>
                                         </div>
-                                        <p class="block">{{e.marijuana}}</p>
                                     </div>
+                                    <div class="mt-1">{{e.description}}</div>
                                 </div>
-                                <div class="mt-1">{{e.description}}</div>
+                                <footer class="card-footer">
+                                    <button v-if="e.attending" @click="toggle_attending(e._idx)" class="button card-footer-item is-primary">
+                                        <i class="fa fa-minus fa-fw"></i>Unattend
+                                    </button>
+                                    <button v-else @click="toggle_attending(e._idx)" class="button card-footer-item is-primary">
+                                        <i class="fa fa-plus fa-fw"></i>Attend
+                                    </button>
+                                    <button v-if="e.created_by !== user_email" @click="start_conversation(e._idx)" class="button card-footer-item is-primary">
+                                        <i class="fa fa-envelope fa-fw"></i>Start Conversation
+                                    </button>
+                                </footer>
                             </div>
-                            <footer class="card-footer">
-                                <button v-if="e.attending" @click="toggle_attending(e._idx)" class="button card-footer-item is-primary">
-                                    <i class="fa fa-minus fa-fw"></i>Unattend
-                                </button>
-                                <button v-else @click="toggle_attending(e._idx)" class="button card-footer-item is-primary">
-                                    <i class="fa fa-plus fa-fw"></i>Attend
-                                </button>
-                                <button v-if="e.created_by !== user_email" @click="start_conversation(e._idx)" class="button card-footer-item is-primary">
-                                    <i class="fa fa-envelope fa-fw"></i>Start Conversation
-                                </button>
-                            </footer>
                         </div>
                     </div>
                 </div>
+
             </div>
+
         </div>
 
         <!-- Messages Column -->
-        <div class="column is-3 box">
-            <h2 class="subtitle">Messages</h2>
-            <div v-for="c in conversations" class="block mb-1 py-1" > <!-- Begin message card-->
+        <div class="column is-3">
+            <div class="box">
+                <h2 class="subtitle">Messages</h2>
+                <div v-if="conversations.length === 0">
+                    <p class="has-text-centered has-text-weight-light">Looks like you don't have any conversations!</p>
+                </div>
+                <div v-for="c in conversations" class="block mb-1 py-1" > <!-- Begin message card-->
                 <div @click="load_conversation(c._idx)" class="box is-clickable is-capitalized"> <!--PUT @CLICK HERE FOR OPEN CONVO METHOD -->
                 <!-- recipient name, depending on whether user is the host or not -->
                     <span v-if="c.host_email == user_email">
@@ -427,8 +439,8 @@
                     </span>
                 </div>
             </div>
-            <!-- Open Convo Modal -->
-            <div v-if="open_conversation !== -1" class="modal is-active">
+                <!-- Open Convo Modal -->
+                <div v-if="open_conversation !== -1" class="modal is-active">
                 <div class="modal-background"></div>
                 <div class="modal-card">
                     <header class="modal-card-head">
@@ -481,8 +493,8 @@
                 </div>
             </div>
 
-            <!-- EXPAND EVENT MODAL -->
-            <div v-if="expanded_event !== -1" class="modal is-active">
+                <!-- EXPAND EVENT MODAL -->
+                <div v-if="expanded_event !== -1" class="modal is-active">
                 <div class="modal-background"></div>
                     <div class="modal-card">
                         <div class="modal-card-head">
@@ -572,6 +584,8 @@
                     </div>
                 </div>
             </div>
+
+        </div>
 
             <!-- HOST PROFILE MODAL -->
             <div v-if="open_profile !== 0" class="modal is-active">

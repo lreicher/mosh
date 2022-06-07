@@ -105,6 +105,8 @@ let init = (app) => {
     app.complete = (events) => {
         events.map((event) => {
             event.attending = false;
+            event.show_attendees = false;
+            event.attendees = [];
         });
     };
 
@@ -152,6 +154,8 @@ let init = (app) => {
                     // img_url: "",
 
                     attending: false,
+                    show_attendees: false,
+                    attendees: [],
                     _state: {
                         host: "clean", event_name: "clean",
                         location: "clean", description: "clean", 
@@ -303,6 +307,20 @@ let init = (app) => {
         }
     };
 
+    app.load_attendees = function(event_idx) {
+        let event = app.vue.events[event_idx];
+        if (event.show_attendees === false) {
+            axios.get(load_attendees_url, {params: {event_id: event.id}}).then(function (response) {
+                event.show_attendees = true;
+                event.attendees = response.data.attendees_list;
+            });
+        }
+        else {
+            event.show_attendees = false;
+        }
+
+    }
+
     app.start_conversation = function (event_idx) {
         let event = app.vue.events[event_idx];
         const exists = (element) => element.event_id === event.id;
@@ -421,8 +439,6 @@ let init = (app) => {
         }
     };
 
-
-
     app.expand_event = function (event_idx) {
         let event = app.vue.events[event_idx];
         app.vue.expanded_event=event;
@@ -513,6 +529,7 @@ let init = (app) => {
         set_add_status: app.set_add_status,
         set_view_myevents_status: app.set_view_myevents_status,
         toggle_attending: app.toggle_attending,
+        load_attendees: app.load_attendees,
         start_conversation: app.start_conversation,
         load_conversation: app.load_conversation,
         close_conversation: app.close_conversation,
