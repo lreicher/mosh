@@ -59,7 +59,10 @@ def index():
         load_conversations_url=URL('load_conversations', signer=url_signer),
         start_conversation_url=URL('start_conversation', signer=url_signer),
         my_callback_url = URL('my_callback', signer=url_signer),
+
         upload_image_url = URL('upload_image', signer=url_signer),
+        file_upload_url = URL('file_upload', signer=url_signer),
+
         open_profile_url = URL('open_profile', signer=url_signer),
         todays_date_url = URL('todays_date', signer=url_signer)
 
@@ -260,6 +263,17 @@ def upload_image():
     event_id = request.json.get("event_id")
     image = request.json.get("image")
     db(db.event.id == event_id).update(image=image)
+    return "ok"
+
+@action('file_upload', method="PUT")
+@action.uses() # Add here things you might want to use.
+def file_upload():
+    file_name = request.params.get("file_name")
+    file_type = request.params.get("file_type")
+    uploaded_file = request.body # This is a file, you can read it.
+    # Diagnostics
+    print("Uploaded", file_name, "of type", file_type)
+    # print("Content:", uploaded_file.read())
     return "ok"
 
 @action('open_profile')

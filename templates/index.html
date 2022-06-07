@@ -101,6 +101,8 @@
                         </button>
                         <div class="card-image">
                             <!--Event photo goes here-->
+                            <img src="mosh_logo.png" alt="Placeholder image">
+
                         </div>
                         <div class="card-content">
                             <div class="content">
@@ -226,7 +228,45 @@
                         </div>
                     </div>
                     <!--Event picture upload-->
-                    <div class="control">
+                    <!-- <div class="section" id="vue-target" v-cloak> -->
+                        <div v-if="!selection_done" class="field has-addons block">
+                        <p class="control">
+                            <div class="file is-info">
+                            <label class="file-label">
+                                <input class="file-input" type="file"
+                                    accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*"
+                                    @change="select_file($event)">
+                                <span class="file-cta">
+                                <span class="file-label">
+                                    <span><i class="fa fa-upload"></i></span>
+                                </span>
+                                </span>
+                            </label>
+                            </div>
+                        </p>
+                        </div>
+                        <template v-if="selection_done && !uploaded">
+                        <div class="block">
+                            <img width="400" :src="img_url" />
+                        </div>
+                        <!-- <div class="block">
+                            <button class="button is-success" :disabled="uploading" @click="upload_file">
+                            <span class="icon is-small">
+                                <i v-if="!uploading" class="fa fa-upload"></i>
+                                <i v-if="uploading" class="fa fa-spinner fa-pulse fa-fw"></i>
+                            </span>
+                            <span>Post</span>
+                            </button>
+                        </div> -->
+                        </template>
+                    <!-- </div> -->
+
+
+
+
+
+
+                    <!-- <div class="control">
                         Insert Pictures of the Event:
                         <div v-for="e in events">
                             <div v-if="!e.image">
@@ -234,24 +274,28 @@
                                 <div class="file is-info">
                                     <label class="file-label">
                                     <input class="file-input" type="file" 
-                                            accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*"
+                                            accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*" >
                                             @change="upload_file($event, e._idx)">
+
                                     <span class="file-cta">
                                         <span class="file-label">
                                         <span><i class="fa fa-upload"></i></span>
                                         </span>
                                     </span>
+                                    
+                                    <img v-if="e.image" width="50" :src="e.image" />
+
                                     </label>
                                 </div>                                        
                                 </p>
                             </div>
                             <img v-if="e.image" width="50" :src="e.image" />
                         </div>
-                    </div>
+                    </div> -->
                 </div>
                 <div class="field">
                     <div class="control">
-                        <input type="submit" @click="add_event" value="Post" class="button is-primary">
+                        <input type="submit" @click="add_event" @click="upload_file" value="Post" class="button is-primary">
                         <input type="submit" @click="set_add_status(false)" value="Cancel" class="button is-warning">
                     </div>
                 </div>
@@ -284,7 +328,8 @@
                                 <!-- TODO Add something here for images -->
                                 <!-- <img src="mosh_logo.png" alt="Placeholder image"> -->
                                 <div v-for="e in events">
-                                    <img v-if="e.image" width="50" :src="e.image" />
+                                    <!-- <img v-if="e.image" width="50" :src="e.image" /> -->
+                                    <img width="400" :src="e.img_url" />
                                 </div>
                             </figure>
                         </div>
@@ -627,7 +672,7 @@
   let load_conversations_url = "[[=XML(load_conversations_url)]]";
   let start_conversation_url = "[[=XML(start_conversation_url)]]";
   let my_callback_url = "[[=XML(my_callback_url)]]";
-  let upload_image_url = "[[=XML(upload_image_url)]]";
+  let file_upload_url = "[[=XML(file_upload_url)]]";
   let open_profile_url = "[[=XML(open_profile_url)]]";
   let todays_date_url = "[[=XML(todays_date_url)]]"
 </script>
