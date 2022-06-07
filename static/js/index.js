@@ -27,6 +27,7 @@ let init = (app) => {
         new_event_time_guidelines: "",
         new_event_alcohol: "",
         new_event_marijuana: "",
+        new_event_image: "",
         open_conversation: -1,
         expanded_event: -1,
         open_profile: 0,
@@ -37,14 +38,6 @@ let init = (app) => {
         all_event: -1,
         todays_date: "",
         required: "",
-
-        selection_done: false,
-        uploading: false,
-        uploaded_file: "",
-        uploaded: false,
-        img_url: "",
-        images: [],
-
 
         vcattending: [ 
             {
@@ -105,8 +98,6 @@ let init = (app) => {
     app.complete = (events) => {
         events.map((event) => {
             event.attending = false;
-            event.show_attendees = false;
-            event.attendees = [];
         });
     };
 
@@ -123,8 +114,7 @@ let init = (app) => {
                 event_time_guidelines: app.vue.new_event_time_guidelines,
                 event_alcohol: app.vue.new_event_alcohol,
                 event_marijuana: app.vue.new_event_marijuana,
-
-                img_url: app.vue.img_url,
+                event_image: app.vue.new_event_image,
 
                 _state: {host: "clean", event_name: "clean",
                         location: "clean", description: "clean",
@@ -148,14 +138,9 @@ let init = (app) => {
                     marijuana: app.vue.new_event_marijuana,
                     created_by: response.data.event.created_by,
                     creation_date: response.data.event.creation_date,
-
-                    // image: "",
-                    img_url: app.vue.img_url,
-                    // img_url: "",
+                    image: app.vue.new_event_image,
 
                     attending: false,
-                    show_attendees: false,
-                    attendees: [],
                     _state: {
                         host: "clean", event_name: "clean",
                         location: "clean", description: "clean", 
@@ -174,12 +159,10 @@ let init = (app) => {
                         time_guidelines: app.vue.new_event_time_guidelines,
                         alcohol: app.vue.new_event_alcohol,
                         marijuana: app.vue.new_event_marijuana,
-
-                        img_url: app.vue.img_url,
+                        image: app.vue.new_event_image,
                     },
                 });
                 let vcevent = response.data.event;
-                console.log(vcevent);
                 // Hosting Calendar
                 app.calendar_add_event(vcevent,app.vue.vchosting,String(app.data.vcolor['hosting']));
                 app.calendar_add_event(vcevent,app.vue.vcall,String(app.data.vcolor['hosting']));
@@ -217,8 +200,7 @@ let init = (app) => {
         app.vue.new_event_time_guidelines = "";
         app.vue.new_event_alcohol = "";
         app.vue.new_event_marijuana = "";
-
-        // app.vue.img_url = "";
+        app.vue.new_event_image = "";
     };
 
     app.set_add_status = function (new_status) {
@@ -307,20 +289,6 @@ let init = (app) => {
         }
     };
 
-    app.load_attendees = function(event_idx) {
-        let event = app.vue.events[event_idx];
-        if (event.show_attendees === false) {
-            axios.get(load_attendees_url, {params: {event_id: event.id}}).then(function (response) {
-                event.show_attendees = true;
-                event.attendees = response.data.attendees_list;
-            });
-        }
-        else {
-            event.show_attendees = false;
-        }
-
-    }
-
     app.start_conversation = function (event_idx) {
         let event = app.vue.events[event_idx];
         const exists = (element) => element.event_id === event.id;
@@ -369,74 +337,6 @@ let init = (app) => {
             app.enumerate(app.vue.messages);
         });
         app.vue.add_message = "";
-    };
-
-    // app.upload_file = function (event) {            // , event_idx
-    //     let input = event.target;
-    //     let file = input.files[0];
-    //     // let e = app.vue.events[event_idx];
-
-    //     // event.push(file);
-    //     let e = app.vue.events[event.length + 1];
-
-    //     if (file) {
-    //         let reader = new FileReader();
-    //         reader.addEventListener("load", function () {
-    //             // Sends the image to the server.
-    //             axios.post(upload_image_url,
-    //                 {
-    //                     event_id: e.id,
-    //                     image: reader.result,
-    //                 })
-    //                 .then(function () {
-    //                     // Sets the local preview.
-    //                     e.image = reader.result;
-
-    //                 });
-    //         });
-    //         reader.readAsDataURL(file);
-    //     }
-    // };
-
-
-    app.select_file = function (event) {
-        // Reads the file.
-        let input = event.target;
-        app.file = input.files[0];
-        if (app.file) {
-            app.vue.selection_done = true;
-            // We read the file.
-            let reader = new FileReader();
-            reader.addEventListener("load", function () {
-                app.vue.img_url = reader.result;
-                // img_url = reader.result;
-                // event.img_url = reader.result;
-            });
-            reader.readAsDataURL(app.file);
-        }
-    };
-
-    app.upload_complete = function (file_name, file_type) {
-        app.vue.uploading = false;
-        app.vue.uploaded = true;
-    };
-
-    app.upload_file = function () {
-        if (app.file) {
-            let file_type = app.file.type;
-            let file_name = app.file.name;
-            let full_url = file_upload_url + "&file_name=" + encodeURIComponent(file_name)
-                + "&file_type=" + encodeURIComponent(file_type);
-            // Uploads the file, using the low-level streaming interface. This avoid any
-            // encoding.
-            app.vue.uploading = true;
-            let req = new XMLHttpRequest();
-            req.addEventListener("load", function () {
-                app.upload_complete(file_name, file_type)
-            });
-            req.open("PUT", full_url, true);
-            req.send(app.file);
-        }
     };
 
     app.expand_event = function (event_idx) {
@@ -529,7 +429,6 @@ let init = (app) => {
         set_add_status: app.set_add_status,
         set_view_myevents_status: app.set_view_myevents_status,
         toggle_attending: app.toggle_attending,
-        load_attendees: app.load_attendees,
         start_conversation: app.start_conversation,
         load_conversation: app.load_conversation,
         close_conversation: app.close_conversation,
@@ -537,8 +436,8 @@ let init = (app) => {
         start_edit: app.start_edit,
         stop_edit: app.stop_edit,
 
-        select_file: app.select_file,
-        upload_file: app.upload_file,
+        // select_file: app.select_file,
+        // upload_file: app.upload_file,
 
         calendar_add_event: app.calendar_add_event,
         calendar_delet_event: app.calendar_delet_event,
@@ -568,7 +467,7 @@ let init = (app) => {
             app.vue.user_email = response.data.user_email;
             app.vue.attending = response.data.attending;
 
-            app.upload_file = response.data.upload_file;
+            // app.upload_file = response.data.upload_file;
 
         }).then(() => {
             app.get_date()
@@ -612,3 +511,4 @@ let init = (app) => {
 // This takes the (empty) app object, and initializes it,
 // putting all the code i
 init(app);
+

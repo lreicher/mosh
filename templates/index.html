@@ -96,7 +96,18 @@
                         </button>
                         <div class="card-image">
                             <!--Event photo goes here-->
-                            <img src="mosh_logo.png" alt="Placeholder image">
+                            <div v-if="e.image == 'House Party' ">
+                                <img src="house_party.jpeg" alt="Placeholder image">
+                            </div>
+                            <div v-else-if="e.image == 'Beach Party' ">
+                                <img src="beach_party.jpeg" alt="Placeholder image">
+                            </div>
+                            <div v-else-if="e.image == 'Forest Party' ">
+                                <img src="forest_party.jpeg" alt="Placeholder image">
+                            </div>
+                            <div v-else-if="e.image == 'Liveshow Party' ">
+                                <img src="liveshow_party.jpeg" alt="Placeholder image">
+                            </div>
 
                         </div>
                         <div class="card-content">
@@ -223,70 +234,21 @@
                             </div>
                         </div>
                         <!--Event picture upload-->
-                        <!-- <div class="section" id="vue-target" v-cloak> -->
-                            <div v-if="!selection_done" class="field has-addons block">
-                            <p class="control">
-                                <div class="file is-info">
-                                <label class="file-label">
-                                    <input class="file-input" type="file"
-                                        accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*"
-                                        @change="select_file($event)">
-                                    <span class="file-cta">
-                                    <span class="file-label">
-                                        <span><i class="fa fa-upload"></i></span>
-                                    </span>
-                                    </span>
-                                </label>
-                                </div>
-                            </p>
-                            </div>
-                            <template v-if="selection_done">
-                            <div class="block">
-                                <img width="400" :src="img_url" />
-                            </div>
-                            <!-- <div class="block">
-                                <button class="button is-success" :disabled="uploading" @click="upload_file">
-                                <span class="icon is-small">
-                                    <i v-if="!uploading" class="fa fa-upload"></i>
-                                    <i v-if="uploading" class="fa fa-spinner fa-pulse fa-fw"></i>
-                                </span>
-                                <span>Post</span>
-                                </button>
-                            </div> -->
-                            </template>
-                        <!-- </div> -->
-
-
-
-
-
-
-                        <!-- <div class="control">
-                            Insert Pictures of the Event:
-                            <div v-for="e in events">
-                                <div v-if="!e.image">
-                                    <p class="control">
-                                    <div class="file is-info">
-                                        <label class="file-label">
-                                        <input class="file-input" type="file"
-                                                accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*" >
-                                                @change="upload_file($event, e._idx)">
-
-                                        <span class="file-cta">
-                                            <span class="file-label">
-                                            <span><i class="fa fa-upload"></i></span>
-                                            </span>
-                                        </span>
-
-                                        <img v-if="e.image" width="50" :src="e.image" />
-
-                                        </label>
+                        <div class="control">
+                            <div class="field">
+                                <label class="label">Choose an Image<label>
+                                <div class="control">
+                                    <div class="select"> 
+                                        <select v-model="new_event_image">
+                                            <option>House Party</option>
+                                            <option>Beach Party</option>
+                                            <option>Forest Party</option>
+                                            <option>Liveshow Party</option>
+                                        </select>
                                     </div>
-                                    </p>
                                 </div>
-                                <img v-if="e.image" width="50" :src="e.image" />
                             </div>
-                        </div> -->
+                        </div>
                     </div>
                     <div class="field">
                         <div class="control">
@@ -339,10 +301,17 @@
                             <div class="card-image">
                                 <figure class="image">
                                     <!-- TODO Add something here for images -->
-                                    <!-- <img src="mosh_logo.png" alt="Placeholder image"> -->
-                                    <div v-for="e in events">
-                                        <!-- <img v-if="e.image" width="50" :src="e.image" /> -->
-                                        <img width="400" :src="e.img_url" />
+                                    <div v-if="e.image == 'House Party' ">
+                                        <img src="house_party.jpeg" alt="Placeholder image">
+                                    </div>
+                                    <div v-else-if="e.image == 'Beach Party' ">
+                                        <img src="beach_party.jpeg" alt="Placeholder image">
+                                    </div>
+                                    <div v-else-if="e.image == 'Forest Party' ">
+                                        <img src="forest_party.jpeg" alt="Placeholder image">
+                                    </div>
+                                    <div v-else-if="e.image == 'Liveshow Party' ">
+                                        <img src="liveshow_party.jpeg" alt="Placeholder image">
                                     </div>
                                 </figure>
                             </div>
@@ -512,6 +481,18 @@
                         <div class="card-image">
                             <figure class="image">
                                 <!-- TODO Add something here for images -->
+                                <div v-if="expanded_event.image == 'House Party' ">
+                                    <img src="house_party.jpeg" alt="Placeholder image">
+                                </div>
+                                <div v-else-if="expanded_event.image == 'Beach Party' ">
+                                    <img src="beach_party.jpeg" alt="Placeholder image">
+                                </div>
+                                <div v-else-if="expanded_event.image == 'Forest Party' ">
+                                    <img src="forest_party.jpeg" alt="Placeholder image">
+                                </div>
+                                <div v-else-if="expanded_event.image == 'Liveshow Party' ">
+                                    <img src="liveshow_party.jpeg" alt="Placeholder image">
+                                </div>
                             </figure>
                         </div>
                         <div class="modal-card-body">
@@ -704,7 +685,6 @@
   let load_conversations_url = "[[=XML(load_conversations_url)]]";
   let start_conversation_url = "[[=XML(start_conversation_url)]]";
   let my_callback_url = "[[=XML(my_callback_url)]]";
-  let file_upload_url = "[[=XML(file_upload_url)]]";
   let open_profile_url = "[[=XML(open_profile_url)]]";
   let todays_date_url = "[[=XML(todays_date_url)]]"
 </script>

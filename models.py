@@ -42,7 +42,7 @@ db.define_table(
     Field('time_guidelines', requires=IS_NOT_EMPTY()),
     Field('alcohol', requires=IS_NOT_EMPTY()),
     Field('marijuana', requires=IS_NOT_EMPTY()),
-    Field('image', 'text'),
+    Field('image'),
     Field('created_by', requires=IS_NOT_EMPTY()),
     Field('creation_date', 'datetime', requires=IS_NOT_EMPTY()),
 )
