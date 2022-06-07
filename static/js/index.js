@@ -41,6 +41,7 @@ let init = (app) => {
         uploaded_file: "",
         uploaded: false,
         img_url: "",
+        images: [],
 
 
         vcattending: [ 
@@ -146,6 +147,7 @@ let init = (app) => {
 
                     // image: "",
                     img_url: app.vue.img_url,
+                    // img_url: "",
 
                     attending: false,
                     _state: {
@@ -178,7 +180,6 @@ let init = (app) => {
                 app.enumerate(app.vue.events);
                 app.reset_event_form();
                 app.set_add_status(false);
-                app.upload_file(vcevent);
             });
     };
 
@@ -211,7 +212,7 @@ let init = (app) => {
         app.vue.new_event_alcohol = "";
         app.vue.new_event_marijuana = "";
 
-        app.vue.img_url = "";
+        // app.vue.img_url = "";
     };
 
     app.set_add_status = function (new_status) {
@@ -388,6 +389,8 @@ let init = (app) => {
             let reader = new FileReader();
             reader.addEventListener("load", function () {
                 app.vue.img_url = reader.result;
+                // img_url = reader.result;
+                // event.img_url = reader.result;
             });
             reader.readAsDataURL(app.file);
         }
