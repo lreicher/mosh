@@ -6,7 +6,7 @@
   }
 </style>
 
-<div class="section" id="vue-target" v-cloak style="background-color:rgb(235, 212, 135);">
+<div class="section" id="vue-target" v-cloak style="background-color:rgb(255, 255, 255);">
     
 
     <!-- MyEvents Page -->
@@ -94,7 +94,7 @@
                                 <span v-else><b>${{e.price}}</b></span>
                             </div>
                         </div>
-                        <button v-if="e.date === todays_date" @click="start_conversation(e._idx)" class="button is-warning">
+                        <button v-if="e.date === todays_date" @click="start_conversation(e._idx)" class="button is-warning is-fullwidth">
                             <i class="fa fa-exclamation-triangle fa-fw"></i>Cop Alert
                         </button>
                         <div class="card-image">
@@ -267,24 +267,21 @@
                     <div class="columns">
                         <div class = "column">
                             <h2 class="subtitle">New Events</h2>
-                                <div class="buttons is-pulled-right">
-                                    <button @click="set_add_status(true)" class="button is-primary">
-                                        <i class="fa fa-plus fa-fw"></i>Add Event
-                                    </button>
-                                    <button v-if="!view_myevents" @click="set_view_myevents_status(true)" class="button is-info">
-                                        <i class="fa fa-book fa-fw"></i>View My Events
-                                    </button>
-                                    <button v-else @click="set_view_myevents_status(false)" class="button is-info">
-                                        <i class="fa fa-globe fa-fw"></i>View All Events
-                                    </button>
-                                </div>
+                            <div class="buttons is-centered">
+                                <button @click="set_add_status(true)" class="button is-primary">
+                                    <i class="fa fa-plus fa-fw"></i>Add Event
+                                </button>
+                                <button v-if="!view_myevents" @click="set_view_myevents_status(true)" class="button is-info">
+                                    <i class="fa fa-book fa-fw"></i>View My Events
+                                </button>
+                                <button v-else @click="set_view_myevents_status(false)" class="button is-info">
+                                    <i class="fa fa-globe fa-fw"></i>View All Events
+                                </button>
+                                <button @click="all_events(true)" class="button is-warning is-light">
+                                    <i class="fa fa-calendar fa-fw"></i> All Events Calendar
+                                </button>
+                            </div>
                         </div>
-                    </div>
-
-                    <div class="buttons">
-                        <button @click="all_events(true)" class="button is-fullwidth is-warning is-light">
-                            <i class="fa fa-calendar fa-fw"></i> All Events Calendar
-                        </button>
                     </div>
                     <!-- Card item -->
                     <div class="section pt-0 container">
