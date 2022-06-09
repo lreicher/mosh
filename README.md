@@ -1,3 +1,6 @@
+MOSH
+by Noah Libeskind, Angelina Hool, Sarah Liang, Sude Yazgan, Hale Guyer, Batuhan Salih, and Lucas Reicher
+
 Overview/Process
 Mosh is a social-media style web application aimed at providing a more organized and safe way to host and find parties. To design our user interface, we made a wireframe design with a main feed of events as the center focus, with supporting features on the side such as messaging and the list of the user's saved parties. Once we created a basic layout, we began to implement these three main elements in HTML, creating the necessary database tables, and getting them linked across all parts of the py4web ecosystem in our controllers file. After an MVP was implemented with these core features, we began the refinement and migration to JS from static HTML. It was at this stage that we began the final stages of implementation which included making users' profiles more customizable, creating a calendar view for events, designing a more interactive and visually pleasing front-end, and adding in final features. 
 
